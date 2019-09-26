@@ -1,35 +1,7 @@
 import time
-from contextlib import contextmanager
 from functools import wraps
 
-import structlog
-from structlog import get_logger
-from structlog.threadlocal import wrap_dict
-
-structlog.configure(
-    processors=[
-        structlog.processors.format_exc_info,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
-    ],
-    context_class=wrap_dict(dict),
-)
-
-
-@contextmanager
-def log_duration(key_name):
-    """Logs duration of block and binds result to structlog
-
-    Arguments:
-        key_name {str} -- Key to bind the result
-    """
-    log = get_logger()
-    start_time = time.time()
-
-    yield
-
-    end_time = time.time()
-    log.bind(**{key_name: end_time - start_time})
+from base_logger import get_logger
 
 
 def pubsub_log_entrypoint(func):
