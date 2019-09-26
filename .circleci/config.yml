@@ -1,9 +1,6 @@
 ---
 version: 2.1
 
-orbs:
-  smoke-tests: fluidly/smoke-tests@1.0.7
-
 commands:
   gcloud_setup:
     steps:
@@ -22,7 +19,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          docker_layer_caching: true  # Cost £15 per month on enabled projects
+          docker_layer_caching: true
       - run:
           name: Authorise docker with GCR
           command: docker login -u _json_key -p "${GOOGLE_CREDENTIALS}" https://eu.gcr.io
@@ -102,21 +99,3 @@ workflows:
           context: PUBLISHING
           requires:
             - build_publish
-      # - deploy:
-          # context: DEPLOYING
-          # requires:
-            # - test
-          # filters:
-            # branches:
-              # only: master
-      # - tag_image:
-          # context: PUBLISHING
-          # requires:
-            # - deploy
-          # filters:
-            # branches:
-              # only: master
-      # - smoke-tests/test:
-          # context: PUBLISHING
-          # requires:
-            # - deploy
