@@ -5,8 +5,9 @@ _extends: .github:.github/default-settings.yml
 
 repository:
   name: python-shared
-  description: One repo to share them all
+  description: One repo to share them all 🔥
 
 collaborators:
   - username: fluidly-machine
     permission: pull
+
