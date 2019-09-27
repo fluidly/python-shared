@@ -1,0 +1,98 @@
+---
+version: 2.1
+
+commands:
+  gcloud_setup:
+    steps:
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            echo $GOOGLE_CREDENTIALS > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud config set project ${GOOGLE_PROJECT}
+
+jobs:
+  build_publish:
+    resource_class: small
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Authorise docker with GCR
+          command: docker login -u _json_key -p "${GOOGLE_CREDENTIALS}" https://eu.gcr.io
+      - run:
+          name: Build docker image
+          command: |
+            docker build --target runtime \
+              -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} \
+              --build-arg RELEASE=${CIRCLE_SHA1} .
+            docker build --target testrunner \
+              -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}-testrunner \
+              --build-arg RELEASE=${CIRCLE_SHA1} .
+      - run:
+          name: Push to Container Registry
+          command: docker push ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}
+  test:
+    resource_class: small
+    working_directory: /app/src
+    docker:
+      - image: ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}-testrunner
+        auth:
+          username: _json_key
+          password: $GOOGLE_CREDENTIALS
+        environment:
+          DATABASE_URL: postgres://test:test@localhost:5432/test
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+    steps:
+      - run:
+          name: Install dev dependencies
+          command: pipenv install --dev
+      - run:
+          name: Run format-check
+          command: pipenv run format-check
+      - run:
+          name: Run lint
+          command: pipenv run lint
+      - run:
+          name: Run pytest
+          command: pipenv run pytest
+  deploy:
+    resource_class: small
+    docker:
+      - image: deepmind/kapitan:ci
+    steps:
+      - checkout
+      - gcloud_setup
+      - run:
+          name: Run Kapitan deploy.sh script
+          command: |
+            gsutil -m cp -P -r gs://fluidly-admin-kapitan .
+            cd fluidly-admin-kapitan
+            ./compiled/${CIRCLE_PROJECT_REPONAME}/scripts/circleci_deploy.sh ${CIRCLE_SHA1}
+  tag_image:
+    resource_class: small
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - gcloud_setup
+      - run:
+          name: Tag build image with "latest" label
+          command: gcloud --quiet container images add-tag ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
+
+workflows:
+  "Build & Deploy":
+    jobs:
+      - build_publish:
+          context: PUBLISHING
+      - test:
+          context: PUBLISHING
+          requires:
+            - build_publish

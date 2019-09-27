@@ -11,3 +11,11 @@ collaborators:
   - username: fluidly-machine
     permission: pull
 
+
+branches:
+  - name: master
+    protection:
+      required_status_checks:
+        contexts:
+           - "ci/circleci: build_publish"
+           - "ci/circleci: test"
