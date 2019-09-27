@@ -20,4 +20,4 @@ format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort
 lint = "bash -c \"flake8 cashflow_controller --exclude 'test*' && flake8 cashflow_api --exclude 'test*'\""
 
 [packages]
-fluidly-structlog = {path = "./structlog"}
+fluidly-structlog = {path = "./fluidly-structlog"}
