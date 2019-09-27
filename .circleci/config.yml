@@ -29,7 +29,7 @@ jobs:
             docker build --target runtime \
               -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} \
               --build-arg RELEASE=${CIRCLE_SHA1} .
-            docker build --target test-runner \
+            docker build --target testrunner \
               -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}-testrunner \
               --build-arg RELEASE=${CIRCLE_SHA1} .
       - run:
