@@ -1,4 +1,4 @@
-from fluidly.pubsub_helper import pubsub_log_entrypoint
+from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint
 
 
 class Message:

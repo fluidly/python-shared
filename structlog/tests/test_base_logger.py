@@ -1,4 +1,4 @@
-from fluidly.base_logger import get_logger
+from fluidly.structlog.base_logger import get_logger
 
 
 def test_get_logger():

@@ -1,4 +1,4 @@
-from fluidly.timing import log_duration
+from fluidly.structlog.timing import log_duration
 
 
 def test_log_duration():
