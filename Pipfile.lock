@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "095dd49c6021bce8e067a8f7a9b0eb107834cb93196d24b87762d9bd4afc240e"
+            "sha256": "c7ab47c2453727dabee721b2fe40387e494ebc606d7a3e305680005362d15287"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,7 +15,11 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "fluidly-structlog": {
+            "path": "./structlog"
+        }
+    },
     "develop": {
         "appdirs": {
             "hashes": [

@@ -1,7 +1,7 @@
 import time
 from contextlib import contextmanager
 
-from base_logger import get_logger
+from fluidly.base_logger import get_logger
 
 
 @contextmanager

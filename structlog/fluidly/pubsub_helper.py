@@ -1,7 +1,7 @@
 import time
 from functools import wraps
 
-from base_logger import get_logger
+from fluidly.base_logger import get_logger
 
 
 def pubsub_log_entrypoint(func):
