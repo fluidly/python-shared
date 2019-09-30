@@ -1,8 +1,9 @@
 from unittest import mock
 
 import pytest
+
 from fluidly.pubsub import base_subscriber
-from fluidly.pubsub.base_subscriber import setup_base_subscriber, subscribe_to_path
+from fluidly.pubsub.base_subscriber import setup_base_subscriber
 
 
 @pytest.fixture
