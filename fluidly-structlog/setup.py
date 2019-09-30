@@ -6,7 +6,7 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = "fluidly_structlog"
+NAME = "fluidly-structlog"
 DESCRIPTION = "Logging config and helpers."
 URL = "https://github.com/fluidly/python-shared"
 EMAIL = "tech@fluidly.com"
