@@ -1,14 +1,15 @@
 from unittest import mock
 
 import pytest
-
 from fluidly.pubsub import base_subscriber
 from fluidly.pubsub.base_subscriber import setup_base_subscriber
 
 
 @pytest.fixture
 def subscriber_mock(monkeypatch):
+    mock_subscriber_client = mock.MagicMock()
     mock_subscriber = mock.MagicMock()
+    monkeypatch.setattr(base_subscriber, "pubsub_v1", mock_subscriber_client)
     monkeypatch.setattr(base_subscriber, "subscriber", mock_subscriber)
     yield mock_subscriber
 

@@ -1,6 +1,6 @@
 import json
 
-from fluidly_pubsub.fluidly.pubsub.exceptions import DropMessageException
+from fluidly.pubsub.exceptions import DropMessageException
 
 
 class Message:
