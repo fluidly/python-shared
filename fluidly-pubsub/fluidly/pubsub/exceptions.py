@@ -1,0 +1,2 @@
+class DropMessageException(Exception):
+    pass

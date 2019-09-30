@@ -6,7 +6,7 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = "fluidly_structlog"
+NAME = "fluidly-pubsub"
 DESCRIPTION = "Logging config and helpers."
 URL = "https://github.com/fluidly/python-shared"
 EMAIL = "tech@fluidly.com"
@@ -15,7 +15,7 @@ REQUIRES_PYTHON = ">=3.7.0"
 VERSION = "0.1.0"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["structlog"]
+REQUIRED = ["google-cloud-pubsub"]
 
 # What packages are optional?
 EXTRAS = {
