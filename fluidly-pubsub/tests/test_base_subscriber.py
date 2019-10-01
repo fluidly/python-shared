@@ -3,8 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from fluidly.pubsub import base_subscriber
-from fluidly.pubsub.base_subscriber import (generate_callback,
-                                            setup_base_subscriber)
+from fluidly.pubsub.base_subscriber import generate_callback, setup_base_subscriber
 from fluidly.pubsub.exceptions import DropMessageException
 from sqlalchemy.exc import IntegrityError
 
