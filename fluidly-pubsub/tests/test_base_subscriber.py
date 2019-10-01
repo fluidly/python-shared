@@ -124,9 +124,7 @@ def test_setup_base_subscriber(monkeypatch):
     mock_subscriber.subscription_path = mock.MagicMock(return_value=path_mock)
     mock_subscriber.subscribe = mock.MagicMock()
 
-    subscriptions = [(mock_subscription_name, mock_callback)]
-
-    setup_base_subscriber(mock_subscriber, subscriptions)
+    setup_base_subscriber(mock_subscriber, [(mock_subscription_name, mock_callback)])
 
     result = mock_subscriber.subscribe.call_args_list[0]
 
