@@ -9,7 +9,6 @@ black = "==18.9b0"
 autoflake = "*"
 isort = "*"
 flake8 = "*"
-v = {editable = true,version = "*"}
 
 [requires]
 python_version = "3.7"
