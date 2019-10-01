@@ -1,15 +1,14 @@
 import os
 
 from fluidly.pubsub.exceptions import DropMessageException
-from fluidly.pubsub.message import Message
 from sqlalchemy.exc import IntegrityError
 
 APPLICATION_NAME = os.getenv("APPLICATION_NAME")
 
 
-def base_generate_callback(message_handler):
+def setup_base_generate_callback(deserialiser, message_handler):
     def callback(message):
-        deserialised_message = Message(message)
+        deserialised_message = deserialiser(message)
 
         try:
             attributes = dict(message.attributes) if message.attributes else None
