@@ -1,4 +1,4 @@
-from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint
+from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint_class
 
 
 class Message:
@@ -9,7 +9,7 @@ class Message:
 
 def test_pubsub_log_entrypoint():
     class TestClass:
-        @pubsub_log_entrypoint
+        @pubsub_log_entrypoint_class
         def test_func(self, session, organisation):
             pass
 
