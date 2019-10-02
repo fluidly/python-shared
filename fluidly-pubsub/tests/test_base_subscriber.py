@@ -5,7 +5,6 @@ import pytest
 from fluidly.pubsub import base_subscriber
 from fluidly.pubsub.base_subscriber import generate_callback, setup_base_subscriber
 from fluidly.pubsub.exceptions import DropMessageException
-from sqlalchemy.exc import IntegrityError
 
 
 @pytest.fixture()
@@ -89,24 +88,6 @@ def test_generate_callback_drop_message_exception(mock_message_handler):
     callback = generate_callback(MagicMock(), mock_message_handler)
 
     callback(mock_message)
-
-    assert mock_message.ack.called
-
-
-def test_generate_callback_integrity_error(mock_message_handler):
-    mock_message = MagicMock(
-        attributes={
-            "connection_id": "qbo:123",
-            "fluidlyWebOrganisationId": "12",
-            "audience": "",
-        }
-    )
-
-    mock_message_handler.side_effect = IntegrityError("statement", "params", "orig")
-    callback = generate_callback(MagicMock(), mock_message_handler)
-
-    with pytest.raises(IntegrityError) as exception:
-        callback(mock_message)
 
     assert mock_message.ack.called
 

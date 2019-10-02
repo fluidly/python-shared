@@ -2,7 +2,6 @@ import os
 
 from fluidly.pubsub.exceptions import DropMessageException
 from fluidly.pubsub.message import Message
-from sqlalchemy.exc import IntegrityError
 
 GOOGLE_PROJECT = os.getenv("GOOGLE_PROJECT")
 APPLICATION_NAME = os.getenv("APPLICATION_NAME")
@@ -34,11 +33,5 @@ def generate_callback(deserialiser, message_handler):
 
         except DropMessageException:
             message.ack()
-        except IntegrityError:
-            # If an IntegrityError is raised (typically a UniqueViolation exception)
-            # then we want to acknowledge the message but still raise the exception.
-            # This means we know about it but not block the subscription.
-            message.ack()
-            raise
 
     return callback
