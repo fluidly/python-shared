@@ -22,3 +22,4 @@ lint = "bash -c \"flake8 cashflow_controller --exclude 'test*' && flake8 cashflo
 [packages]
 fluidly-structlog = {path = "./fluidly-structlog"}
 fluidly-pubsub = {path = "./fluidly-pubsub"}
+fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
