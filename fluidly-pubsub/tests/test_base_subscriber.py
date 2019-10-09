@@ -6,6 +6,7 @@ from fluidly.pubsub import base_subscriber
 from fluidly.pubsub.base_subscriber import generate_callback, setup_base_subscriber
 from fluidly.pubsub.exceptions import DropMessageException
 
+
 @pytest.fixture()
 def mock_message_class(monkeypatch):
     monkeypatch.setattr(base_subscriber, "APPLICATION_NAME", "python-shared")
@@ -34,9 +35,7 @@ def test_generate_callback_wrong_audience(mock_message_class, mock_message_handl
 
 
 def test_generate_callback_no_attributes(mock_message_class, mock_message_handler):
-    mock_message = MagicMock(
-        attributes=None
-    )
+    mock_message = MagicMock(attributes=None)
     callback = generate_callback(MagicMock(), mock_message_handler)
 
     callback(mock_message)
@@ -72,7 +71,6 @@ def test_generate_callback_no_audience(mock_message_handler):
 
 def test_generate_callback_empty_audience(mock_message_handler):
     mock_message = MagicMock(
-
         attributes={
             "connection_id": "qbo:123",
             "fluidlyWebOrganisationId": "12",
