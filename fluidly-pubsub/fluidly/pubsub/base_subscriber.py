@@ -22,7 +22,8 @@ def generate_callback(deserialiser, message_handler):
         try:
             attributes = dict(message.attributes) if message.attributes else None
             if (
-                "audience" in attributes
+                attributes
+                and "audience" in attributes
                 and attributes["audience"]
                 and APPLICATION_NAME not in attributes["audience"]
             ):
