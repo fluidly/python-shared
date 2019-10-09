@@ -8,8 +8,8 @@ from fluidly.flask.api_exception import APIException
 test_view = Blueprint("test_view", __name__)
 
 
-@rest_log_entrypoint
 @test_view.route("/logging-success")
+@rest_log_entrypoint
 def success():
     return Response(
         response=json.dumps({"flaskStatus": "OK"}),
@@ -18,8 +18,8 @@ def success():
     )
 
 
-@rest_log_entrypoint
 @test_view.route("/logging-exception")
+@rest_log_entrypoint
 def exception():
     raise APIException()
 
