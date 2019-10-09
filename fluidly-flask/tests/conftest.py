@@ -21,7 +21,7 @@ def success():
 @test_view.route("/logging-exception")
 @rest_log_entrypoint
 def exception():
-    raise APIException()
+    raise APIException(status=500, title="An Api Exception occurred.")
 
 
 def create_app():
