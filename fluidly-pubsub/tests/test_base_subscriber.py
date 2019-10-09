@@ -34,6 +34,15 @@ def test_generate_callback_wrong_audience(mock_message_class, mock_message_handl
     assert mock_message.ack.called
 
 
+def test_generate_callback_no_attributes(mock_message_class, mock_message_handler):
+    mock_message = MagicMock(attributes=None)
+    callback = generate_callback(MagicMock(), mock_message_handler)
+
+    callback(mock_message)
+
+    assert mock_message_handler.called
+
+
 def test_generate_callback_correct_audience(mock_message_class, mock_message_handler):
     mock_message = MagicMock(
         attributes={
