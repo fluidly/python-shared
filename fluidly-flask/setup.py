@@ -15,7 +15,13 @@ REQUIRES_PYTHON = ">=3.7.0"
 VERSION = "0.1.0"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["flask", "marshmallow", "uwsgi", "fluidly-structlog"]
+REQUIRED = [
+    "flask",
+    "marshmallow",
+    "uwsgi",
+    "fluidly-structlog @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-structlog",
+]
+
 
 # What packages are optional?
 EXTRAS = {

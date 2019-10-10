@@ -1,9 +1,9 @@
-import pytest
 import json
-from flask import Flask, Blueprint, Response, jsonify
-from fluidly.flask.rest_logger import rest_log_entrypoint
-from fluidly.flask.api_exception import APIException
 
+import pytest
+from flask import Blueprint, Flask, Response
+from fluidly.flask.api_exception import APIException
+from fluidly.flask.rest_logger import rest_log_entrypoint
 
 test_view = Blueprint("test_view", __name__)
 
@@ -40,4 +40,3 @@ if __name__ == "__main__":
 @pytest.fixture(scope="session")
 def client():
     yield app.test_client()
-
