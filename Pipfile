@@ -17,7 +17,7 @@ python_version = "3.7"
 setup = "bash -c \"cp .env.template .env\""
 format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort -rc . && black .\""
 format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort -rc -c . && black --check --diff .\""
-lint = "bash -c \"flake8 cashflow_controller --exclude 'test*' && flake8 cashflow_api --exclude 'test*'\""
+lint = "bash -c \"flake8 fluidly-*\""
 
 [packages]
 fluidly-structlog = {path = "./fluidly-structlog"}
