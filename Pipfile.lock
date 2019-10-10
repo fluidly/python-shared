@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c41a2c4da6192f1d3d308a30fdaee491b35087f3e81c6508af5ba5cd80df22e2"
+            "sha256": "dcae9f5ce0917af02d0bcbf77e7b6396ced16c405246f06bd972b2922ac4afdd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,9 @@
         ]
     },
     "default": {
+        "fluidly-flask": {
+            "path": "./fluidly-flask"
+        },
         "fluidly-pubsub": {
             "path": "./fluidly-pubsub"
         },
