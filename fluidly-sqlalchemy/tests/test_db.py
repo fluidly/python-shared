@@ -19,7 +19,7 @@ def test_db_session(sessionmaker_mock):
 
     sessionmaker_mock.return_value = session_mock
 
-    with db_session() as session:
+    with db_session():
         pass
 
     assert session_mock.close.called
@@ -32,7 +32,7 @@ def test_db_session_with_exception(sessionmaker_mock):
     sessionmaker_mock.return_value = session_mock
 
     with raises(Exception, match="Random exception"):
-        with db_session() as session:
+        with db_session():
             raise Exception("Random exception")
 
     assert session_mock.rollback.called
