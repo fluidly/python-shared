@@ -1,10 +1,9 @@
 import time
 from functools import wraps
 
+from flask import request
 from fluidly.flask.api_exception import APIException
 from fluidly.structlog import base_logger
-
-from flask import request
 
 
 def rest_log_entrypoint(func):
