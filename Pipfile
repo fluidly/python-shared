@@ -9,6 +9,8 @@ black = "==18.9b0"
 autoflake = "*"
 isort = "*"
 flake8 = "*"
+responses = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.7"
@@ -24,3 +26,4 @@ fluidly-structlog = {path = "./fluidly-structlog"}
 fluidly-pubsub = {path = "./fluidly-pubsub"}
 fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
 fluidly-flask = {path = "./fluidly-flask"}
+fluidly-auth = {path = "./fluidly-auth"}
