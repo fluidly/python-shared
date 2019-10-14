@@ -2,12 +2,13 @@ import re
 from unittest import mock
 
 import pytest
-import responses
 from fluidly.auth import permissions
 from fluidly.auth.permissions import (
     UserPermissionsPayloadException,
     check_user_permissions,
 )
+
+import responses
 
 USER_PERMISSIONS_URL = "https://user-permissions.url"
 

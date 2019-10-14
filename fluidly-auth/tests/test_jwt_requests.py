@@ -1,9 +1,10 @@
 from unittest import mock
 
 import pytest
-import responses
 from fluidly.auth import jwt_requests
 from fluidly.auth.jwt_requests import make_jwt_request
+
+import responses
 
 
 @pytest.fixture()
