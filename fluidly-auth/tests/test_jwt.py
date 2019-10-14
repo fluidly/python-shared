@@ -1,9 +1,9 @@
 from unittest import mock
 
 import pytest
+
 from fluidly.auth import jwt
 from fluidly.auth.jwt import generate_jwt
-
 from freezegun import freeze_time
 
 
