@@ -7,11 +7,12 @@ GOOGLE_PROJECT = os.getenv("GOOGLE_PROJECT")
 APPLICATION_NAME = os.getenv("APPLICATION_NAME")
 
 
-def setup_base_subscriber(subscriber, subscriptions):
+def setup_base_subscriber(subscriber, subscriptions, **kwargs):
     for subscription_name, message_handler in subscriptions:
         subscriber.subscribe(
             subscriber.subscription_path(GOOGLE_PROJECT, subscription_name),
             callback=generate_callback(Message, message_handler),
+            **kwargs
         )
 
 

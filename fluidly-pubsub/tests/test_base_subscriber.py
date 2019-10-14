@@ -114,9 +114,16 @@ def test_setup_base_subscriber(monkeypatch):
     mock_subscriber.subscription_path = mock.MagicMock(return_value=path_mock)
     mock_subscriber.subscribe = mock.MagicMock()
 
-    setup_base_subscriber(mock_subscriber, [(mock_subscription_name, mock_callback)])
+    mock_kwarg = mock.Mock()
+
+    setup_base_subscriber(
+        mock_subscriber,
+        [(mock_subscription_name, mock_callback)],
+        mock_kwarg=mock_kwarg,
+    )
 
     result = mock_subscriber.subscribe.call_args_list[0]
 
     assert result[0][0] == path_mock
     assert result[1]["callback"] == mock_gen_callback
+    assert result[1]["mock_kwarg"] == mock_kwarg
