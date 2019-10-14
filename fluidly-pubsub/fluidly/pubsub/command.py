@@ -1,8 +1,7 @@
 from typing import Any, Callable, List, Tuple
 
-from google.cloud import pubsub_v1
-
 from fluidly.pubsub.base_subscriber import setup_base_subscriber
+from google.cloud import pubsub_v1
 
 Subscriptions = List[Tuple[str, Callable[[str], Any]]]
 
