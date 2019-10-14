@@ -1,9 +1,10 @@
 import json
 
 import pytest
-from flask import Blueprint, Flask, Response
 from fluidly.flask.api_exception import APIException
 from fluidly.flask.rest_logger import rest_log_entrypoint
+
+from flask import Blueprint, Flask, Response
 
 test_view = Blueprint("test_view", __name__)
 
