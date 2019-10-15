@@ -1,7 +1,7 @@
 from functools import wraps
 
 from fluidly.flask.api_exception import APIException
-from fluidly.structlog.base_logger import rest_log_entrypoint
+from fluidly.flask.rest_logger import rest_log_entrypoint
 from marshmallow import ValidationError
 from werkzeug.exceptions import BadRequest
 
