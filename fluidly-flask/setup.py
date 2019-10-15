@@ -20,6 +20,7 @@ REQUIRED = [
     "marshmallow",
     "uwsgi",
     "fluidly-structlog @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-structlog",
+    "fluidly-auth @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-auth",
 ]
 
 
