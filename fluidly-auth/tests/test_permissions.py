@@ -9,7 +9,7 @@ from fluidly.auth.permissions import (
     check_user_permissions,
 )
 
-USER_PERMISSIONS_URL = "https://user-permissions.url"
+FLUIDLY_API_URL = "https://fluidly-api.url"
 
 
 @pytest.fixture()
@@ -23,7 +23,7 @@ def mocked_generate_jwt(monkeypatch):
 def mocked_200_granted_permissions(mocked_responses):
     mocked_responses.add(
         responses.GET,
-        re.compile(f"{USER_PERMISSIONS_URL}/*"),
+        re.compile(f"{FLUIDLY_API_URL}/*"),
         json={"grantAccess": True},
         status=200,
     )
@@ -35,7 +35,7 @@ def mocked_200_granted_permissions(mocked_responses):
 def mocked_200_not_granted_permissions(mocked_responses):
     mocked_responses.add(
         responses.GET,
-        re.compile(f"{USER_PERMISSIONS_URL}/*"),
+        re.compile(f"{FLUIDLY_API_URL}/*"),
         json={"grantAccess": False, "reason": "Being impolite"},
         status=200,
     )
@@ -45,9 +45,7 @@ def mocked_200_not_granted_permissions(mocked_responses):
 
 @pytest.fixture()
 def mocked_500_permissions(mocked_responses):
-    mocked_responses.add(
-        responses.GET, re.compile(f"{USER_PERMISSIONS_URL}/*"), status=500
-    )
+    mocked_responses.add(responses.GET, re.compile(f"{FLUIDLY_API_URL}/*"), status=500)
 
     yield mocked_responses
 
@@ -55,14 +53,14 @@ def mocked_500_permissions(mocked_responses):
 @pytest.fixture()
 def mocked_env_permissions_url_path(monkeypatch):
     mock_env_permissions_url = mock.MagicMock()
-    mock_env_permissions_url.return_value = USER_PERMISSIONS_URL
+    mock_env_permissions_url.return_value = FLUIDLY_API_URL
     monkeypatch.setattr(permissions.os, "getenv", mock_env_permissions_url)
     yield mock_env_permissions_url
 
 
 class TestCheckUserPermissions:
     def test_required_permission_url(self):
-        with pytest.raises(ValueError, match="Please provide USER_PERMISSIONS_URL"):
+        with pytest.raises(ValueError, match="Please provide FLUIDLY_API_URL"):
             check_user_permissions({}, "connection_id")
 
     def test_passing_env_permission_url(
@@ -80,9 +78,7 @@ class TestCheckUserPermissions:
         self, mocked_generate_jwt, mocked_200_granted_permissions
     ):
         try:
-            check_user_permissions(
-                {}, "connection_id", user_permissions_url=USER_PERMISSIONS_URL
-            )
+            check_user_permissions({}, "connection_id", fluidly_api_url=FLUIDLY_API_URL)
         except ValueError:
             pytest.fail("Unexpected ValueError")
 
@@ -90,17 +86,13 @@ class TestCheckUserPermissions:
         self, mocked_generate_jwt, mocked_500_permissions
     ):
         with pytest.raises(UserPermissionsPayloadException):
-            check_user_permissions(
-                {}, "connection_id", user_permissions_url=USER_PERMISSIONS_URL
-            )
+            check_user_permissions({}, "connection_id", fluidly_api_url=FLUIDLY_API_URL)
 
     def test_not_granted_permissions(
         self, mocked_generate_jwt, mocked_200_not_granted_permissions
     ):
         assert (
-            check_user_permissions(
-                {}, "connection_id", user_permissions_url=USER_PERMISSIONS_URL
-            )
+            check_user_permissions({}, "connection_id", fluidly_api_url=FLUIDLY_API_URL)
             == False
         )
 
@@ -108,8 +100,6 @@ class TestCheckUserPermissions:
         self, mocked_generate_jwt, mocked_200_granted_permissions
     ):
         assert (
-            check_user_permissions(
-                {}, "connection_id", user_permissions_url=USER_PERMISSIONS_URL
-            )
+            check_user_permissions({}, "connection_id", fluidly_api_url=FLUIDLY_API_URL)
             == True
         )
