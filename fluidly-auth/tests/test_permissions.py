@@ -6,6 +6,7 @@ import responses
 from fluidly.auth import permissions
 from fluidly.auth.permissions import (
     UserPermissionsPayloadException,
+    check_admin_permissions,
     check_user_permissions,
 )
 
@@ -103,3 +104,44 @@ class TestCheckUserPermissions:
             check_user_permissions({}, "connection_id", fluidly_api_url=FLUIDLY_API_URL)
             == True
         )
+
+
+class TestCheckAdminPermissions:
+    def test_admin_required_permission_url(self):
+        with pytest.raises(ValueError, match="Please provide FLUIDLY_API_URL"):
+            check_admin_permissions({})
+
+    def test_admin_passing_env_permission_url(
+        self,
+        mocked_generate_jwt,
+        mocked_200_granted_permissions,
+        mocked_env_permissions_url_path,
+    ):
+        try:
+            check_admin_permissions({})
+        except ValueError:
+            pytest.fail("Unexpected ValueError")
+
+    def test_admin_using_kwargs_permission_url(
+        self, mocked_generate_jwt, mocked_200_granted_permissions
+    ):
+        try:
+            check_admin_permissions({}, fluidly_api_url=FLUIDLY_API_URL)
+        except ValueError:
+            pytest.fail("Unexpected ValueError")
+
+    def test_admin_payload_exception_when_unavailable(
+        self, mocked_generate_jwt, mocked_500_permissions
+    ):
+        with pytest.raises(UserPermissionsPayloadException):
+            check_admin_permissions({}, fluidly_api_url=FLUIDLY_API_URL)
+
+    def test_admin_not_granted_permissions(
+        self, mocked_generate_jwt, mocked_200_not_granted_permissions
+    ):
+        assert check_admin_permissions({}, fluidly_api_url=FLUIDLY_API_URL) == False
+
+    def test_admin_granted_permissions(
+        self, mocked_generate_jwt, mocked_200_granted_permissions
+    ):
+        assert check_admin_permissions({}, fluidly_api_url=FLUIDLY_API_URL) == True
