@@ -14,16 +14,18 @@ class UserPermissionsPayloadException(Exception):
     pass
 
 
-def check_permissions(original_payload, request_url, fluidly_api_url=None, **kwargs):
+def get_fluidly_api_url(fluidly_api_url=None):
     if not fluidly_api_url:
         fluidly_api_url = os.getenv("FLUIDLY_API_URL")
 
     if not fluidly_api_url:
         raise ValueError("Please provide FLUIDLY_API_URL")
+    return fluidly_api_url
 
+
+def check_permissions(original_payload, request_url, **kwargs):
     start = time.time()
     signed_jwt = generate_jwt(original_payload)
-
     try:
         response = make_jwt_request(signed_jwt, request_url)
     except Exception:
@@ -72,13 +74,12 @@ def check_permissions(original_payload, request_url, fluidly_api_url=None, **kwa
 def check_user_permissions(original_payload, connection_id, fluidly_api_url=None):
     return check_permissions(
         original_payload,
-        f"{fluidly_api_url}/v1/user-permissions/connections/{connection_id}",
-        fluidly_api_url,
+        f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/connections/{connection_id}",
         connection_id=connection_id,
     )
 
 
 def check_admin_permissions(original_payload, fluidly_api_url=None):
     return check_permissions(
-        original_payload, f"{fluidly_api_url}/admin/", fluidly_api_url
+        original_payload, f"{get_fluidly_api_url(fluidly_api_url)}/admin/"
     )
