@@ -3,7 +3,7 @@ import json
 import pytest
 from flask import Blueprint, Flask, Response
 from fluidly.flask.api_exception import APIException, handle_api_exception
-from fluidly.flask.decorators import authorised
+from fluidly.flask.decorators import admin, authorised
 from fluidly.flask.rest_logger import rest_log_entrypoint
 
 test_view = Blueprint("test_view", __name__)
@@ -13,6 +13,16 @@ test_view = Blueprint("test_view", __name__)
 @authorised
 def authorised_endpoint(connection_id):
     return connection_id, 200
+
+
+@test_view.route("/admin")
+@admin
+def admin_endpoint():
+    return Response(
+        response=json.dumps({"flaskStatus": "OK"}),
+        status=200,
+        mimetype="application/json",
+    )
 
 
 @test_view.route("/logging-success")
