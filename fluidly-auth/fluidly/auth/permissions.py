@@ -81,5 +81,6 @@ def check_user_permissions(original_payload, connection_id, fluidly_api_url=None
 
 def check_admin_permissions(original_payload, fluidly_api_url=None):
     return check_permissions(
-        original_payload, f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/admin"
+        original_payload,
+        f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/admin",
     )
