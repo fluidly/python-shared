@@ -22,6 +22,7 @@ format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort
 lint = "bash -c \"flake8 fluidly-*\""
 
 [packages]
+fluidly-generic-delete = {path = "./fluidly-generic-delete"}
 fluidly-structlog = {path = "./fluidly-structlog"}
 fluidly-pubsub = {path = "./fluidly-pubsub"}
 fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
