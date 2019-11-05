@@ -16,6 +16,7 @@ VERSION = "0.1.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
+    "sqlalchemy",
     "fluidly-structlog @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-structlog",
     "fluidly-pubsub @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-pubsub",
 ]
