@@ -14,7 +14,10 @@ class DeleteConnectionConsumer:
     def delete_by_connection_id(self, session, message, refresh_generated=False):
         connection_id = message.connection_id
         for table in self.base.metadata.tables.values():
-            if table.name not in self.ignored_tables and table.c.get("connection_id") is not None:
+            if (
+                table.name not in self.ignored_tables
+                and table.c.get("connection_id") is not None
+            ):
                 session.execute(
                     delete(table).where(table.c.connection_id == connection_id)
                 )
