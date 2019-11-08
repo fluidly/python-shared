@@ -31,9 +31,9 @@ def handle_exceptions(func):
 
 
 def log_safely(func):
-    @wraps(func)
     @rest_log_entrypoint
     @handle_exceptions
+    @wraps(func)
     def decorated_function(*args, **kwargs):
         return func(*args, **kwargs)
 
