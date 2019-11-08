@@ -5,7 +5,6 @@ from flask import Blueprint, Flask, Response
 from fluidly.flask.api_exception import APIException, handle_api_exception
 from fluidly.flask.decorators import admin, authorised
 from fluidly.flask.exception_handling import log_safely
-from fluidly.flask.rest_logger import rest_log_entrypoint
 
 test_view = Blueprint("test_view", __name__)
 
