@@ -4,7 +4,7 @@ import pytest
 from flask import Blueprint, Flask, Response
 from fluidly.flask.api_exception import APIException, handle_api_exception
 from fluidly.flask.decorators import admin, authorised
-from fluidly.flask.rest_logger import rest_log_entrypoint
+from fluidly.flask.exception_handling import log_safely
 
 test_view = Blueprint("test_view", __name__)
 
@@ -26,8 +26,8 @@ def admin_endpoint():
 
 
 @test_view.route("/logging-success")
-@rest_log_entrypoint
-def success():
+@log_safely
+def logging_success_function():
     return Response(
         response=json.dumps({"flaskStatus": "OK"}),
         status=200,
@@ -36,7 +36,7 @@ def success():
 
 
 @test_view.route("/logging-exception")
-@rest_log_entrypoint
+@log_safely
 def exception():
     raise APIException(status=500, title="An Api Exception occurred.")
 
