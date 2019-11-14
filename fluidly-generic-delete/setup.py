@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 
 # Package meta-data.
 NAME = "fluidly-generic-delete"
-DESCRIPTION = "Generic endpoints for deleting things"
+DESCRIPTION = "Generic subscription for deleting things"
 URL = "https://github.com/fluidly/generic-delete"
 EMAIL = "tech@fluidly.com"
 AUTHOR = "Fluidly"

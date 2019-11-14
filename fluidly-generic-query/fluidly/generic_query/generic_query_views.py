@@ -2,10 +2,9 @@ import json
 from json import JSONDecodeError
 
 from flask import Response, request
-from sqlalchemy.inspection import inspect
-
 from fluidly.flask.api_exception import APIException
 from fluidly.sqlalchemy.db import db_session
+from sqlalchemy.inspection import inspect
 
 DEFAULT_PAGE_SIZE = 10
 

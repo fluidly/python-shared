@@ -1,5 +1,6 @@
 import sqlalchemy as db
 
+
 class MockModel:
     __tablename__ = "mock_model"
     id = db.Column(db.String, primary_key=True)

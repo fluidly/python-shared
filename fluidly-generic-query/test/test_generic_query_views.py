@@ -1,20 +1,18 @@
-from unittest.mock import MagicMock, Mock
 from json import JSONDecodeError
+from unittest.mock import MagicMock, Mock
 
 import pytest
+from fluidly.flask.api_exception import APIException
 from fluidly.generic_query import generic_query_views
 from fluidly.generic_query.generic_query_views import post_model_by_connection_id_query
-from fluidly.generic_query.mock_model_factory import MockModel, mock_model_factory
-from fluidly.sqlalchemy.db import db_session
+from fluidly.generic_query.mock_model_factory import MockModel
 from pytest import raises
-from fluidly.sqlalchemy import db
-
-from fluidly.flask.api_exception import APIException
 
 
 class MockColumn:
     def __init__(self, name):
         self.name = name
+
 
 @pytest.fixture()
 def mock_base():
@@ -59,11 +57,15 @@ def test_post_model_by_connection_id_query_invalid_json(mocked_request, mock_bas
         assert result.status_code == 422
 
 
-def test_post_model_by_connection_id_query_wrong_columns(mocked_request, mock_base, mocked_inspect):
+def test_post_model_by_connection_id_query_wrong_columns(
+    mocked_request, mock_base, mocked_inspect
+):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {"query": {"id": "id_value", "some_random_column": "erwerwer9"}}
+    mocked_request.get_json.return_value = {
+        "query": {"id": "id_value", "some_random_column": "erwerwer9"}
+    }
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = []
 
@@ -72,11 +74,16 @@ def test_post_model_by_connection_id_query_wrong_columns(mocked_request, mock_ba
     assert result.status_code == 400
 
 
-def test_post_model_by_connection_id_query_wrong_page(mocked_request, mock_base, mocked_inspect):
+def test_post_model_by_connection_id_query_wrong_page(
+    mocked_request, mock_base, mocked_inspect
+):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {"query": {"id": "id_value", "due_date": "2019-12-09"}, "page": 0}
+    mocked_request.get_json.return_value = {
+        "query": {"id": "id_value", "due_date": "2019-12-09"},
+        "page": 0,
+    }
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = [MockColumn("id"), MockColumn("due_date")]
 
@@ -85,11 +92,17 @@ def test_post_model_by_connection_id_query_wrong_page(mocked_request, mock_base,
     assert result.status_code == 400
 
 
-def test_post_model_by_connection_id_query_proper_document_query(monkeypatch, mocked_request, mock_base, mocked_inspect):
+def test_post_model_by_connection_id_query_proper_document_query(
+    monkeypatch, mocked_request, mock_base, mocked_inspect
+):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {"query": {"id": "id_value", "due_date": "2019-12-09"}, "page": 1, "page_size": 5}
+    mocked_request.get_json.return_value = {
+        "query": {"id": "id_value", "due_date": "2019-12-09"},
+        "page": 1,
+        "page_size": 5,
+    }
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = [MockColumn("id"), MockColumn("due_date")]
 
