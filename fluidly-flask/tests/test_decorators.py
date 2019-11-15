@@ -9,9 +9,7 @@ from fluidly.flask import decorators
 @pytest.fixture
 def mocked_user_permissions_throws_error(monkeypatch):
     check_user_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.delattr(
-        decorators, "check_user_permissions"
-    )
+    monkeypatch.delattr(decorators, "check_user_permissions")
     yield check_user_permissions_mock
 
 
@@ -36,9 +34,7 @@ def mocked_given_permissions(monkeypatch):
 @pytest.fixture
 def mocked_permissions_throws_exception(monkeypatch):
     check_admin_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.delattr(
-        decorators, "check_admin_permissions"
-    )
+    monkeypatch.delattr(decorators, "check_admin_permissions")
     yield check_admin_permissions_mock
 
 
@@ -132,7 +128,9 @@ class TestAuthorised:
         assert response.status_code == 200
         assert response.data == b"some:connection_id"
 
-    def test_service_account_granted(self, client, mocked_user_permissions_throws_error):
+    def test_service_account_granted(
+        self, client, mocked_user_permissions_throws_error
+    ):
         response = client.get(
             "/shared/authorised/some:connection_id",
             headers={
