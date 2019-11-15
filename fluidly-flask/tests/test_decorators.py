@@ -7,6 +7,13 @@ from fluidly.flask import decorators
 
 
 @pytest.fixture
+def mocked_user_permissions_throws_error(monkeypatch):
+    check_user_permissions_mock = mock.MagicMock(return_value=False)
+    monkeypatch.delattr(decorators, "check_user_permissions")
+    yield check_user_permissions_mock
+
+
+@pytest.fixture
 def mocked_not_given_permissions(monkeypatch):
     check_user_permissions_mock = mock.MagicMock(return_value=False)
     monkeypatch.setattr(
@@ -22,6 +29,13 @@ def mocked_given_permissions(monkeypatch):
         decorators, "check_user_permissions", check_user_permissions_mock
     )
     yield check_user_permissions_mock
+
+
+@pytest.fixture
+def mocked_permissions_throws_exception(monkeypatch):
+    check_admin_permissions_mock = mock.MagicMock(return_value=False)
+    monkeypatch.delattr(decorators, "check_admin_permissions")
+    yield check_admin_permissions_mock
 
 
 @pytest.fixture
@@ -114,7 +128,9 @@ class TestAuthorised:
         assert response.status_code == 200
         assert response.data == b"some:connection_id"
 
-    def test_service_account_granted(self, client, mocked_not_given_permissions):
+    def test_service_account_granted(
+        self, client, mocked_user_permissions_throws_error
+    ):
         response = client.get(
             "/shared/authorised/some:connection_id",
             headers={
@@ -199,7 +215,7 @@ class TestAdmin:
         assert response.status_code == 200
 
     def test_admin_service_account_granted(
-        self, client, mocked_admin_not_given_permissions
+        self, client, mocked_permissions_throws_exception
     ):
         response = client.get(
             "/shared/admin",
