@@ -34,7 +34,9 @@ def authorised(f):
         try:
             is_service_account = internal_claims.get("isServiceAccount", False)
 
-            if not is_service_account and not check_user_permissions(claims, connection_id):
+            if not is_service_account and not check_user_permissions(
+                claims, connection_id
+            ):
                 raise APIException(status=403, title="User cannot access this resource")
         except (
             ValueError,
