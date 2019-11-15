@@ -75,10 +75,9 @@ def admin(f):
         user_id_from_token = auth0_claims.get("userId", None)
 
         try:
-            given_permissions = check_admin_permissions(claims)
             is_service_account = internal_claims.get("isServiceAccount", False)
 
-            if not is_service_account and not given_permissions:
+            if not is_service_account and not check_admin_permissions(claims):
                 raise APIException(status=403, title="User cannot access this resource")
         except (
             ValueError,
