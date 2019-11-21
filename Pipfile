@@ -29,3 +29,4 @@ fluidly-pubsub = {path = "./fluidly-pubsub"}
 fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
 fluidly-flask = {path = "./fluidly-flask"}
 fluidly-auth = {path = "./fluidly-auth"}
+responses = "*"

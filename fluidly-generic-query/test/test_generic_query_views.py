@@ -1,27 +1,13 @@
-from json import JSONDecodeError
+import json
 from unittest.mock import MagicMock, Mock
 
 import pytest
-from fluidly.flask.api_exception import APIException
 from fluidly.generic_query import generic_query_views
-from fluidly.generic_query.generic_query_views import post_model_by_connection_id_query
-from fluidly.generic_query.mock_model_factory import MockModel
-from pytest import raises
 
 
 class MockColumn:
     def __init__(self, name):
         self.name = name
-
-
-@pytest.fixture()
-def mock_base():
-    base_mock = Mock()
-    values_mock = [MockModel()]
-
-    base_mock._decl_class_registry.values.return_value = values_mock
-
-    return base_mock
 
 
 @pytest.fixture()
@@ -38,70 +24,59 @@ def mocked_inspect(monkeypatch):
     yield inspect_mock
 
 
-def test_post_model_by_connection_id_query_model_not_found(mock_base):
+def test_post_model_by_connection_id_query_model_not_found(client):
     model = "not_a_table"
 
-    result = post_model_by_connection_id_query(mock_base, model)
+    args = {"model": model}
+    result = client.post("/debug/connection-views", data=json.dumps(args))
 
     assert result.status_code == 404
 
 
-def test_post_model_by_connection_id_query_invalid_json(mocked_request, mock_base):
+def test_post_model_by_connection_id_query_invalid_json(client):
     model = "mock_model"
 
-    mocked_request.get_json.side_effect = JSONDecodeError("", "", 0)
+    result = client.post(f"/debug/connection-views/{model}", data="segedrh{{{")
 
-    with raises(APIException):
-        result = post_model_by_connection_id_query(mock_base, model)
-
-        assert result.status_code == 422
+    assert result.status_code == 422
 
 
-def test_post_model_by_connection_id_query_wrong_columns(
-    mocked_request, mock_base, mocked_inspect
-):
+def test_post_model_by_connection_id_query_wrong_columns(client, mocked_inspect):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {
-        "query": {"id": "id_value", "some_random_column": "erwerwer9"}
-    }
+    args = {"query": {"id": "id_value", "some_random_column": "erwerwer9"}}
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = []
 
-    result = post_model_by_connection_id_query(mock_base, model)
+    result = client.post(f"/debug/connection-views/{model}", json=args)
 
     assert result.status_code == 400
 
 
-def test_post_model_by_connection_id_query_wrong_page(
-    mocked_request, mock_base, mocked_inspect
-):
+def test_post_model_by_connection_id_query_wrong_page(mocked_inspect, client):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {
-        "query": {"id": "id_value", "due_date": "2019-12-09"},
-        "page": 0,
-    }
+    args = {"query": {"id": "id_value", "due_date": "2019-12-09"}, "page": 0}
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = [MockColumn("id"), MockColumn("due_date")]
 
-    result = post_model_by_connection_id_query(mock_base, model)
+    result = client.post(f"/debug/connection-views/{model}", json=args)
 
     assert result.status_code == 400
 
 
 def test_post_model_by_connection_id_query_proper_document_query(
-    monkeypatch, mocked_request, mock_base, mocked_inspect
+    monkeypatch, mocked_inspect, client
 ):
     model = "mock_model"
     insights_mock = Mock()
 
-    mocked_request.get_json.return_value = {
+    args = {
         "query": {"id": "id_value", "due_date": "2019-12-09"},
         "page": 1,
-        "page_size": 5,
+        "pageSize": 5,
     }
     mocked_inspect.return_value = insights_mock
     insights_mock.columns = [MockColumn("id"), MockColumn("due_date")]
@@ -112,5 +87,5 @@ def test_post_model_by_connection_id_query_proper_document_query(
     mock_session.__enter__.return_value = mock_session
     mock_db_session.return_value = mock_session
 
-    result = post_model_by_connection_id_query(mock_base, model)
+    result = client.post(f"/debug/connection-views/{model}", json=args)
     assert result.status_code == 200

@@ -1,9 +1,10 @@
 import json
-from json import JSONDecodeError
+from json.decoder import JSONDecodeError
 
-from flask import Response, request
+from flask import Blueprint, Response, request
 from fluidly.flask.api_exception import APIException
 from fluidly.sqlalchemy.db import db_session
+from marshmallow import INCLUDE, Schema, ValidationError, fields
 from sqlalchemy.inspection import inspect
 
 DEFAULT_PAGE_SIZE = 10
@@ -34,47 +35,63 @@ def is_valid_query(model, query):
     return True
 
 
-def post_model_by_connection_id_query(base, table_name):
-    model = get_model_by_tablename(base, table_name)
-    if not model:
-        return Response(status=404)
+class QuerySchema(Schema):
+    class Meta:
+        unknown = INCLUDE
 
-    try:
-        payload = request.get_json(force=True)
-    except JSONDecodeError:
-        raise APIException(status=422, title="Request body has invalid json")
 
-    query = payload.get("query")
+class RequestSchema(Schema):
+    query = fields.Nested(QuerySchema, required=True)
+    page = fields.Integer()
+    page_size = fields.Integer(data_key="pageSize")
 
-    if not is_valid_query(model, query):
-        return Response(response="Query is invalid", status=400)
 
-    page = payload.get("page", 1)
-    page_size = payload.get("page_size", DEFAULT_PAGE_SIZE)
+def debug_connection_views(base):
+    view = Blueprint("debug_connection_views", __name__)
 
-    if page < 1:
-        return Response(response="Pages start at 1", status=400)
+    @view.route("/debug/connection-views/<table_name>", methods=["POST"])
+    def post_model_by_connection_id_query(table_name):
+        model = get_model_by_tablename(base, table_name)
+        if not model:
+            return Response(status=404)
+        try:
+            payload = RequestSchema().loads(request.data)
+        except (ValidationError, JSONDecodeError):
+            raise APIException(status=422, title="Request body has invalid json")
 
-    with db_session() as session:
-        session.execute("set local statement_timeout = 10000")
+        query = payload.get("query")
 
-        results = (
-            session.query(model)
-            .filter_by(**query)
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-            .all()
+        if not is_valid_query(model, query):
+            return Response(response="Query is invalid", status=400)
+
+        page = payload.get("page", 1)
+        page_size = payload.get("page_size", DEFAULT_PAGE_SIZE)
+
+        if page < 1:
+            return Response(response="Pages start at 1", status=400)
+
+        with db_session() as session:
+            session.execute("set local statement_timeout = 10000")
+
+            results = (
+                session.query(model)
+                .filter_by(**query)
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+                .all()
+            )
+            result_values = []
+
+            if results:
+                for m in results:
+                    result_values.append(get_model_dict(m))
+
+        return Response(
+            response=json.dumps(
+                {"meta": {"query": query}, "data": result_values}, default=str
+            ),
+            status=200,
+            mimetype="application/json",
         )
-        result_values = []
 
-        if results:
-            for m in results:
-                result_values.append(get_model_dict(m))
-
-    return Response(
-        response=json.dumps(
-            {"meta": {"query": query}, "data": result_values}, default=str
-        ),
-        status=200,
-        mimetype="application/json",
-    )
+    return view
