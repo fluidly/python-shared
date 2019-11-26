@@ -1,4 +1,5 @@
 import json
+import re
 from json.decoder import JSONDecodeError
 
 from flask import Blueprint, Response, request
@@ -23,7 +24,7 @@ def get_model_dict(model):
 
 
 def is_valid_query(model, query):
-    if not query:
+    if not query or "connection_id" not in query:
         return False
 
     inspected_model = inspect(model)
@@ -33,6 +34,19 @@ def is_valid_query(model, query):
         if var not in columns:
             return False
     return True
+
+
+first_cap_re = re.compile("(.)([A-Z][a-z]+)")
+all_cap_re = re.compile("([a-z0-9])([A-Z])")
+
+
+def snakecase(name):
+    s1 = first_cap_re.sub(r"\1_\2", name)
+    return all_cap_re.sub(r"\1_\2", s1).lower()
+
+
+def snakify(data):
+    return {snakecase(key): value for key, value in data.items()}
 
 
 class QuerySchema(Schema):
@@ -59,7 +73,8 @@ def debug_connection_views(base):
         except (ValidationError, JSONDecodeError):
             raise APIException(status=422, title="Request body has invalid json")
 
-        query = payload.get("query")
+        raw_query = payload.get("query")
+        query = snakify(raw_query)
 
         if not is_valid_query(model, query):
             return Response(response="Query is invalid", status=400)
@@ -88,7 +103,7 @@ def debug_connection_views(base):
 
         return Response(
             response=json.dumps(
-                {"meta": {"query": query}, "data": result_values}, default=str
+                {"meta": {"query": raw_query}, "data": result_values}, default=str
             ),
             status=200,
             mimetype="application/json",
