@@ -6,9 +6,9 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = "fluidly-generic-delete"
-DESCRIPTION = "Generic subscription for deleting things"
-URL = "https://github.com/fluidly/generic-delete"
+NAME = "fluidly-generic-query"
+DESCRIPTION = "Generic endpoints for querying tables"
+URL = "https://github.com/fluidly/generic-query"
 EMAIL = "tech@fluidly.com"
 AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.7.0"
@@ -16,9 +16,11 @@ VERSION = "0.1.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
+    "flask",
     "sqlalchemy",
     "fluidly-structlog @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-structlog",
     "fluidly-pubsub @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-pubsub",
+    "fluidly-flask @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-flask",
 ]
 # What packages are optional?
 EXTRAS = {

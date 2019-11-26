@@ -23,6 +23,7 @@ lint = "bash -c \"flake8 fluidly-*\""
 
 [packages]
 fluidly-generic-delete = {path = "./fluidly-generic-delete"}
+fluidly-generic-query = {path = "./fluidly-generic-query"}
 fluidly-structlog = {path = "./fluidly-structlog"}
 fluidly-pubsub = {path = "./fluidly-pubsub"}
 fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
