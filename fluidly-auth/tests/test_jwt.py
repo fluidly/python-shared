@@ -74,7 +74,7 @@ class TestGenerateJWT:
         mocked_env_credentials_path,
     ):
         try:
-            generate_jwt({})
+            assert generate_jwt({}) == b"JWT_TOKEN"
         except ValueError:
             pytest.fail("Unexpected ValueError")
 
