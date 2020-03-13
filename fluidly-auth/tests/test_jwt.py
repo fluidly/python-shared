@@ -34,7 +34,27 @@ def mocked_jwt(monkeypatch):
 @pytest.fixture()
 def mocked_env_credentials_path(monkeypatch):
     mock_env_credentials = mock.MagicMock()
-    mock_env_credentials.return_value = "/some/path/credentials.json"
+
+    def load_env_var(env_name):
+        if env_name == "GOOGLE_APPLICATION_CREDENTIALS":
+            return "/some/path/credentials.json"
+        return None
+
+    mock_env_credentials.side_effect = load_env_var
+    monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
+    yield mock_env_credentials
+
+
+@pytest.fixture()
+def mocked_auth0_jwt_token(monkeypatch):
+    mock_env_credentials = mock.MagicMock()
+
+    def load_env_var(env_name):
+        if env_name == "AUTH0_JWT_TOKEN":
+            return b"AUTH0_JWT_TOKEN"
+        return None
+
+    mock_env_credentials.side_effect = load_env_var
     monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
     yield mock_env_credentials
 
@@ -85,10 +105,17 @@ class TestGenerateJWT:
             "sub": "test@email.com",
         }
 
-    def test_returning_jwt(self, mocked_google_credentials, mocked_crypt, mocked_jwt):
+    def test_returning_jwt_with_google_credentials(
+        self, mocked_google_credentials, mocked_crypt, mocked_jwt
+    ):
         assert (
             generate_jwt(
                 {}, google_application_credentials="/some/path/credentials.json"
             )
             == b"JWT_TOKEN"
         )
+
+    def test_returning_jwt_from_auth0_env(
+        self, mocked_auth0_jwt_token, mocked_crypt, mocked_jwt
+    ):
+        assert generate_jwt({}) == b"AUTH0_JWT_TOKEN"
