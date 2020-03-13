@@ -10,6 +10,9 @@ audience = "https://api.fluidly.com"
 def generate_jwt(claims, google_application_credentials=None):
     """Generates a signed JSON Web Token using a Google API Service Account."""
 
+    if os.getenv("AUTH0_JWT_TOKEN"):
+        return os.getenv("AUTH0_JWT_TOKEN")
+
     if not google_application_credentials:
         google_application_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
