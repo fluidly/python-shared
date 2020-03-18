@@ -101,6 +101,25 @@ def test_generate_callback_drop_message_exception(mock_message_handler):
     assert mock_message.ack.called
 
 
+def test_generate_callback_refresh_data_initial(mock_message_handler):
+    mock_message = MagicMock(
+        attributes={
+            "connection_id": "qbo:123",
+            "fluidlyWebOrganisationId": "12",
+            "audience": "",
+            "initial": "initial",
+        }
+    )
+
+    mock_message_handler.side_effect = DropMessageException("mocked error")
+    callback = generate_callback(MagicMock(), mock_message_handler)
+
+    callback(mock_message)
+
+    assert mock_message.ack.called
+    assert mock_message_handler.call_args[0][1]
+
+
 def test_setup_base_subscriber(monkeypatch):
     mock_gen_callback = mock.MagicMock()
     mock_callback = mock.MagicMock()
