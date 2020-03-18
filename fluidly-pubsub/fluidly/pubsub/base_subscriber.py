@@ -22,6 +22,11 @@ def generate_callback(deserialiser, message_handler):
 
         try:
             attributes = dict(message.attributes) if message.attributes else None
+            refresh_data = None
+
+            if attributes:
+                refresh_data = "initial" in attributes or "replayed" in attributes
+
             if (
                 attributes
                 and "audience" in attributes
@@ -31,7 +36,7 @@ def generate_callback(deserialiser, message_handler):
                 message.ack()
                 return
 
-            message_handler(deserialised_message)
+            message_handler(deserialised_message, refresh_data)
 
         except DropMessageException:
             message.ack()
