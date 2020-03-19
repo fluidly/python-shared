@@ -1,0 +1,6 @@
+from typing import Any
+
+from fluidly.structlog.base_logger import get_logger as get_logger
+
+def pubsub_log_entrypoint(func: Any): ...
+def pubsub_log_entrypoint_class(func: Any): ...
