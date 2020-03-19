@@ -1,4 +1,5 @@
 import os
+from typing import Callable, Any
 
 from fluidly.pubsub.exceptions import DropMessageException
 from fluidly.pubsub.message import Message
@@ -16,7 +17,7 @@ def setup_base_subscriber(subscriber, subscriptions, **kwargs):
         )
 
 
-def generate_callback(deserialiser, message_handler):
+def generate_callback(deserialiser, message_handler: Callable[[Message], Any]):
     def callback(message):
         deserialised_message = deserialiser(message)
 

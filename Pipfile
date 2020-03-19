@@ -11,6 +11,7 @@ isort = "*"
 flake8 = "*"
 responses = "*"
 freezegun = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
