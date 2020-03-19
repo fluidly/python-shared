@@ -1,8 +1,10 @@
+from typing import Dict, Any
+
 import structlog
 from structlog.threadlocal import wrap_dict
 
 
-def add_log_level_as_severity(logger, method_name, event_dict):
+def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -> Dict:
     """
     Add the log level to the event dict.
     """
