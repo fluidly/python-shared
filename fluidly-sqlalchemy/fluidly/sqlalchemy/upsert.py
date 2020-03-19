@@ -1,4 +1,7 @@
-def get_on_conflict_stmt(stmt, index, args, where):
+from sqlalchemy.sql import Insert
+
+
+def get_on_conflict_stmt(stmt: Insert, index, args, where) -> Insert:
     return stmt.on_conflict_do_update(
         index_elements=index,
         set_={attr: getattr(stmt.excluded, attr) for attr in args},
