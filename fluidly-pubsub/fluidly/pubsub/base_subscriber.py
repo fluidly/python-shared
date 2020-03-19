@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Any
+from typing import Any, Callable
 
 from fluidly.pubsub.exceptions import DropMessageException
 from fluidly.pubsub.message import Message
