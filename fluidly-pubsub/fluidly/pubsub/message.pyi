@@ -1,5 +1,6 @@
-from fluidly.pubsub.exceptions import DropMessageException as DropMessageException
 from typing import Any
+
+from fluidly.pubsub.exceptions import DropMessageException as DropMessageException
 
 class Message:
     message: Any = ...
