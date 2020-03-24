@@ -1,3 +1,3 @@
 from typing import Any
 
-__path__: Any
+get_logger: Any

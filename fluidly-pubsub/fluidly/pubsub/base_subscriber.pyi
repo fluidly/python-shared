@@ -1,6 +1,5 @@
 from typing import Any, Callable
 
-from fluidly.pubsub.exceptions import DropMessageException as DropMessageException
 from fluidly.pubsub.message import Message as Message
 
 GOOGLE_PROJECT: Any
