@@ -1,3 +1,0 @@
-from typing import Any
-
-def make_jwt_request(signed_jwt: Any, url: Any): ...

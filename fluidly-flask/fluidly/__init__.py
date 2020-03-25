@@ -1,3 +1,5 @@
+from typing import Any
+
 try:
     import pkg_resources
 
@@ -5,4 +7,4 @@ try:
 except ImportError:
     import pkgutil
 
-    __path__ = pkgutil.extend_path(__path__, __name__)
+    __path__: Any = pkgutil.extend_path(__path__, __name__)
