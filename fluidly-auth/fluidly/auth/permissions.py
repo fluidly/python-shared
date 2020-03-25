@@ -14,7 +14,7 @@ class UserPermissionsPayloadException(Exception):
     pass
 
 
-def get_fluidly_api_url(fluidly_api_url=None):
+def get_fluidly_api_url(fluidly_api_url: str = None) -> str:
     if not fluidly_api_url:
         fluidly_api_url = os.getenv("FLUIDLY_API_URL")
 

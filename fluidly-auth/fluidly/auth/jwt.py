@@ -1,13 +1,16 @@
 import os
 import time
+from typing import Any, Optional
 
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
 
-audience = "https://api.fluidly.com"
+audience: str = "https://api.fluidly.com"
 
 
-def generate_jwt(claims, google_application_credentials=None):
+def generate_jwt(
+    claims: Any, google_application_credentials: Optional[Any] = None
+) -> Any:
     """Generates a signed JSON Web Token using a Google API Service Account."""
 
     if os.getenv("AUTH0_JWT_TOKEN"):
