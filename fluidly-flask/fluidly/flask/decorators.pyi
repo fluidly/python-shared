@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, TypeVar
 
 from fluidly.auth.permissions import (
     UserPermissionsPayloadException as UserPermissionsPayloadException,
@@ -11,5 +11,7 @@ from fluidly.auth.permissions import check_user_permissions as check_user_permis
 from fluidly.flask.api_exception import APIException as APIException
 from fluidly.flask.utils import base64_decode as base64_decode
 
-def authorised(f: Any): ...
-def admin(f: Any): ...
+T = TypeVar("T")
+
+def authorised(f: T) -> T: ...
+def admin(f: T) -> T: ...

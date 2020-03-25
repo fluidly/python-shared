@@ -61,6 +61,9 @@ jobs:
           name: Run lint
           command: pipenv run lint
       - run:
+          name: Run type-check
+          command: pipenv run type-check
+      - run:
           name: Run pytest
           command: pipenv run pytest
   deploy:
