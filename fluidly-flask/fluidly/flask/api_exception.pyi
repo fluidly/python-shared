@@ -1,7 +1,6 @@
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
 
 from flask import Response
-
 
 class APIException(Exception):
     title: Any = ...
