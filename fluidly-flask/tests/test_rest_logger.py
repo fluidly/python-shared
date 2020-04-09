@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+
 from fluidly.structlog import base_logger
 
 

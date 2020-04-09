@@ -3,10 +3,11 @@ import re
 from json.decoder import JSONDecodeError
 
 from flask import Blueprint, Response, request
-from fluidly.flask.api_exception import APIException
-from fluidly.sqlalchemy.db import db_session
 from marshmallow import INCLUDE, Schema, ValidationError, fields
 from sqlalchemy.inspection import inspect
+
+from fluidly.flask.api_exception import APIException
+from fluidly.sqlalchemy.db import db_session
 
 DEFAULT_PAGE_SIZE = 10
 

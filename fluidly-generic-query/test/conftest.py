@@ -3,6 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 from flask import Flask, Response
+
 from fluidly.flask.api_exception import APIException
 from fluidly.generic_query import generic_query_views
 from fluidly.generic_query.mock_model_factory import MockModel
