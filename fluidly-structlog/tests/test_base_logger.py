@@ -1,7 +1,7 @@
 import pytest
 import structlog
 
-from fluidly.structlog.base_logger import get_logger, filter_by_level
+from fluidly.structlog.base_logger import filter_by_level, get_logger
 
 
 def test_get_logger():
