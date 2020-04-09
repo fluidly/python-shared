@@ -1,9 +1,10 @@
 from functools import wraps
 
-from fluidly.flask.api_exception import APIException
-from fluidly.flask.rest_logger import rest_log_entrypoint
 from marshmallow import ValidationError
 from werkzeug.exceptions import BadRequest
+
+from fluidly.flask.api_exception import APIException
+from fluidly.flask.rest_logger import rest_log_entrypoint
 
 
 def handle_exceptions(func):

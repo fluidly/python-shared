@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 import responses
+
 from fluidly.auth import permissions
 from fluidly.auth.permissions import (
     UserPermissionsPayloadException,

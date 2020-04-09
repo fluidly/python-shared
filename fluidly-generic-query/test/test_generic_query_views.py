@@ -2,6 +2,7 @@ import json
 from unittest.mock import MagicMock, Mock
 
 import pytest
+
 from fluidly.generic_query import generic_query_views
 
 

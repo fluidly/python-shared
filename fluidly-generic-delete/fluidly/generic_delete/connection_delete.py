@@ -1,5 +1,6 @@
-from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint_class
 from sqlalchemy import delete
+
+from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint_class
 
 
 class DeleteConnectionConsumer:

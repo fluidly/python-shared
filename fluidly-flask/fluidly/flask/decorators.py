@@ -2,6 +2,7 @@ import json
 from functools import wraps
 
 from flask import g, request
+
 from fluidly.auth.permissions import (
     UserPermissionsPayloadException,
     UserPermissionsRequestException,

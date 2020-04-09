@@ -3,6 +3,7 @@ import json
 from unittest import mock
 
 import pytest
+
 from fluidly.flask import decorators
 
 

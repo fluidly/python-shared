@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import MagicMock, Mock
 
 import pytest
+
 from fluidly.generic_delete.connection_delete import DeleteConnectionConsumer
 from fluidly.pubsub.message import Message
 

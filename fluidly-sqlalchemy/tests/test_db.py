@@ -1,9 +1,10 @@
 from unittest import mock
 
 import pytest
+from pytest import raises
+
 from fluidly.sqlalchemy import db
 from fluidly.sqlalchemy.db import db_session
-from pytest import raises
 
 
 @pytest.fixture()
