@@ -31,7 +31,6 @@ def pubsub_log_entrypoint(func):
             "pubsub_message_processed",
             duration=end - start,
             success=True,
-            attributes=message.attributes,
             connection_id=message.attributes.get("connection_id"),
         )
         return result
@@ -66,7 +65,6 @@ def pubsub_log_entrypoint_class(func):
             "pubsub_message_processed",
             duration=end - start,
             success=True,
-            attributes=message.attributes,
             connection_id=message.attributes.get("connection_id"),
         )
         return result
