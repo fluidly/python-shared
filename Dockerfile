@@ -15,6 +15,7 @@ FROM dependency AS testrunner
 COPY --from=dependency --chown=app $APP_DIR $APP_DIR
 COPY . $APP_DIR/src
 ENV PYTHONPATH=${APP_DIR}/src
+RUN pipenv install --dev
 
 ###
 # Build runtime Docker image
