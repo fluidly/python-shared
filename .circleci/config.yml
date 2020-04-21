@@ -52,9 +52,6 @@ jobs:
           POSTGRES_DB: test
     steps:
       - run:
-          name: Install dev dependencies
-          command: pipenv install --dev
-      - run:
           name: Run format-check
           command: pipenv run format-check
       - run:
