@@ -3,7 +3,7 @@
 ##
 FROM eu.gcr.io/fluidly-registry-15304c60/python:latest-dev AS dependency
 
-COPY Pipfile Pipfile.lock . $APP_DIR/src/
+COPY --chown=app Pipfile Pipfile.lock . $APP_DIR/src/
 WORKDIR $APP_DIR/src
 RUN pipenv install --dev
 

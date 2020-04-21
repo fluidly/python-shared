@@ -12,6 +12,13 @@ flake8 = "*"
 responses = "*"
 freezegun = "*"
 mypy = "*"
+fluidly-generic-delete = {path = "./fluidly-generic-delete", editable = true}
+fluidly-generic-query = {path = "./fluidly-generic-query", editable = true}
+fluidly-structlog = {path = "./fluidly-structlog", editable = true}
+fluidly-pubsub = {path = "./fluidly-pubsub", editable = true}
+fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy", editable = true}
+fluidly-flask = {path = "./fluidly-flask", editable = true}
+fluidly-auth = {path = "./fluidly-auth", editable = true}
 
 [requires]
 python_version = "3.7"
@@ -24,10 +31,3 @@ lint = "bash -c \"flake8 fluidly-*\""
 type-check = "bash -c \"mypy fluidly-auth/fluidly/auth/ --strict && mypy fluidly-pubsub/fluidly/pubsub/ --strict && mypy fluidly-structlog/fluidly/structlog/ --strict && mypy fluidly-sqlalchemy/fluidly/sqlalchemy/ --strict && mypy fluidly-flask/fluidly/flask/ --strict\""
 
 [packages]
-fluidly-generic-delete = {path = "./fluidly-generic-delete"}
-fluidly-generic-query = {path = "./fluidly-generic-query"}
-fluidly-structlog = {path = "./fluidly-structlog"}
-fluidly-pubsub = {path = "./fluidly-pubsub"}
-fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy"}
-fluidly-flask = {path = "./fluidly-flask"}
-fluidly-auth = {path = "./fluidly-auth"}
