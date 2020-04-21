@@ -12,7 +12,7 @@ commands:
             gcloud config set project ${GOOGLE_PROJECT}
 
 jobs:
-  build:
+  build_publish:
     resource_class: small
     docker:
       - image: google/cloud-sdk
@@ -29,6 +29,9 @@ jobs:
             docker build --target testrunner \
               -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}-testrunner \
               --build-arg RELEASE=${CIRCLE_SHA1} .
+      - run:
+          name: Push to Container Registry
+          command: docker push ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}
   test:
     resource_class: small
     working_directory: /app/src
@@ -59,11 +62,11 @@ jobs:
           command: pipenv run pytest
 
 workflows:
-  "Build & Test":
+  "Build":
     jobs:
-      - build:
+      - build_publish:
           context: PUBLISHING
       - test:
           context: PUBLISHING
           requires:
-            - build
+            - build_publish
