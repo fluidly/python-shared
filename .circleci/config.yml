@@ -26,9 +26,6 @@ jobs:
       - run:
           name: Build docker image
           command: |
-            docker build --target runtime \
-              -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} \
-              --build-arg RELEASE=${CIRCLE_SHA1} .
             docker build --target testrunner \
               -t ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}-testrunner \
               --build-arg RELEASE=${CIRCLE_SHA1} .
@@ -63,32 +60,9 @@ jobs:
       - run:
           name: Run pytest
           command: pipenv run pytest
-  deploy:
-    resource_class: small
-    docker:
-      - image: deepmind/kapitan:ci
-    steps:
-      - checkout
-      - gcloud_setup
-      - run:
-          name: Run Kapitan deploy.sh script
-          command: |
-            gsutil -m cp -P -r gs://fluidly-admin-kapitan .
-            cd fluidly-admin-kapitan
-            ./compiled/${CIRCLE_PROJECT_REPONAME}/scripts/circleci_deploy.sh ${CIRCLE_SHA1}
-  tag_image:
-    resource_class: small
-    docker:
-      - image: google/cloud-sdk
-    steps:
-      - checkout
-      - gcloud_setup
-      - run:
-          name: Tag build image with "latest" label
-          command: gcloud --quiet container images add-tag ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1} ${GOOGLE_CONTAINER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
 
 workflows:
-  "Build & Deploy":
+  "Build":
     jobs:
       - build_publish:
           context: PUBLISHING
