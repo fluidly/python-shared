@@ -1,0 +1,12 @@
+extends: default
+
+rules:
+  document-start: disable
+
+  line-length:
+    max: 200
+
+  new-line-at-end-of-file: disable
+  truthy: disable
+  comments:
+    level: error

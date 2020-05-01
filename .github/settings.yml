@@ -17,5 +17,5 @@ branches:
     protection:
       required_status_checks:
         contexts:
-           - "ci/circleci: build_publish"
-           - "ci/circleci: test"
+          - "ci/circleci: build_publish"
+          - "ci/circleci: test"
