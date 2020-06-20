@@ -48,6 +48,8 @@ def test_content_type_invalid(logger_mock, request_mock):
         args={},
         headers=request_mock.headers,
         url="/foo",
+        request_accept_header="text/plain",
+        response_content_type="application/json",
     )
 
 

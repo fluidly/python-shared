@@ -32,6 +32,8 @@ def validate_content_type(response: Response) -> Response:
             args=dict(request.view_args),
             headers=dict(headers),
             url=request.full_path,
+            request_accept_header=accept_header,
+            response_content_type=response.content_type,
         )
 
     return response
