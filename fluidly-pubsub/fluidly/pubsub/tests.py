@@ -23,3 +23,8 @@ def message_from_dict(payload_dict: dict, attributes: dict = None):
 def message_from_tuple(payload_tuple: namedtuple, attributes: dict = None):
     tuple_as_json = json.dumps(payload_tuple._asdict())
     return mock_message(tuple_as_json, attributes)
+
+
+def message_from_fixture(path: str, attributes: dict = None):
+    with open(path, "r") as fixture:
+        return mock_message(fixture.read(), attributes)
