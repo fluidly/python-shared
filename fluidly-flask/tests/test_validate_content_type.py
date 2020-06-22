@@ -73,3 +73,30 @@ def test_wildcard_accept_header(logger_mock, request_mock):
 
     assert validated_response == response
     assert not logger_mock.warning.called
+
+
+def test_multiple_accept_types_valid(logger_mock, request_mock):
+    request_mock.headers = {"Accept": "application/json,application/text"}
+
+    response = Response("{}", content_type="application/json")
+
+    validate_content_type(response)
+    assert not logger_mock.warning.called
+
+
+def test_multiple_accept_types_invalid(logger_mock, request_mock):
+    request_mock.headers = {"Accept": "application/json,application/text"}
+
+    response = Response("foobar", content_type="text/plain")
+
+    validate_content_type(response)
+    assert logger_mock.warning.called
+
+
+def test_multiple_accept_types_with_wildcard(logger_mock, request_mock):
+    request_mock.headers = {"Accept": "application/json,*/*"}
+
+    response = Response("foobar", content_type="text/plain")
+
+    validate_content_type(response)
+    assert not logger_mock.warning.called
