@@ -5,6 +5,13 @@ from fluidly.structlog.base_logger import get_logger
 WILDCARD_ACCEPT_HEADER = "*/*"
 
 
+def is_valid_content_type(accept_header, response_content_type):
+    return (
+        accept_header == WILDCARD_ACCEPT_HEADER
+        or accept_header == response_content_type
+    )
+
+
 def validate_content_type(response: Response) -> Response:
     """Checks if the response content-type is compatible with the request's
     Accept header. If a mismatch is found, log the request.
@@ -21,10 +28,9 @@ def validate_content_type(response: Response) -> Response:
     headers = request.headers
     accept_header = headers.get("Accept", WILDCARD_ACCEPT_HEADER)
 
-    if (
-        accept_header != WILDCARD_ACCEPT_HEADER
-        and accept_header != response.content_type
-    ):
+    accept_headers = accept_header.split(",")
+
+    if not any(is_valid_content_type(h, response.content_type) for h in accept_headers):
         logger = get_logger()
 
         logger.warning(
