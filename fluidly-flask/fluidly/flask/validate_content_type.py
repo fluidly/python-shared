@@ -1,3 +1,5 @@
+from typing import Optional
+
 from flask import Response, request
 
 from fluidly.structlog.base_logger import get_logger
@@ -5,7 +7,9 @@ from fluidly.structlog.base_logger import get_logger
 WILDCARD_ACCEPT_HEADER = "*/*"
 
 
-def is_valid_content_type(accept_header, response_content_type):
+def is_valid_content_type(
+    accept_header: str, response_content_type: Optional[str]
+) -> bool:
     return (
         accept_header == WILDCARD_ACCEPT_HEADER
         or accept_header == response_content_type
