@@ -100,3 +100,12 @@ def test_multiple_accept_types_with_wildcard(logger_mock, request_mock):
 
     validate_content_type(response)
     assert not logger_mock.warning.called
+
+
+def test_subset_content_type(logger_mock, request_mock):
+    request_mock.headers = {"Accept": "application/json"}
+
+    response = Response("foobar", content_type="application/problem+json")
+
+    validate_content_type(response)
+    assert not logger_mock.warning.called
