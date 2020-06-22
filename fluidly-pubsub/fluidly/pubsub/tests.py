@@ -1,3 +1,4 @@
+import datetime
 import json
 from collections import namedtuple
 from unittest import mock
@@ -9,6 +10,7 @@ def mock_message(payload: str, attributes: dict = None):
     pubsub_message = mock.Mock()
     pubsub_message.data = payload
     pubsub_message.attributes = attributes
+    pubsub_message.publish_time = datetime.datetime.now()
 
     return Message(pubsub_message)
 
