@@ -16,6 +16,7 @@ def test_mock_message():
 
     assert mocked_message.data == {"some": "payload"}
     assert mocked_message.attributes == {"some": "attributes"}
+    assert mocked_message.publish_time
 
 
 def test_message_from_dict():
@@ -25,6 +26,7 @@ def test_message_from_dict():
 
     assert mocked_message_from_dict.data == {"some": "payload"}
     assert mocked_message_from_dict.attributes == {"some": "attributes"}
+    assert mocked_message_from_dict.publish_time
 
 
 def test_message_from_tuple():
@@ -35,6 +37,7 @@ def test_message_from_tuple():
 
     assert mocked_message_from_tuple.data == {"a": 1, "b": 2}
     assert mocked_message_from_tuple.attributes == {"some": "attributes"}
+    assert mocked_message_from_tuple.publish_time
 
 
 def test_message_from_fixture():
@@ -51,3 +54,4 @@ def test_message_from_fixture():
             mocked_message = message_from_fixture(path, attributes)
             assert mocked_message.data == payload
             assert mocked_message.attributes == attributes
+            assert mocked_message.publish_time
