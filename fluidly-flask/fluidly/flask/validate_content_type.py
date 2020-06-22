@@ -7,12 +7,32 @@ from fluidly.structlog.base_logger import get_logger
 WILDCARD_ACCEPT_HEADER = "*/*"
 
 
+def extract_root_type(content_type: Optional[str]) -> Optional[str]:
+    """Examples of subset content types are:
+
+        application/problem+json
+        image/svg+xml
+    """
+    if not content_type:
+        return content_type
+
+    try:
+        prefix, suffix = content_type.split("/", 1)
+        _, base_suffix = suffix.rsplit("+", 1)
+    except Exception:
+        # If any exception occurs, do not prevent the response from returning
+        return content_type
+
+    return f"{prefix}/{base_suffix}"
+
+
 def is_valid_content_type(
     accept_header: str, response_content_type: Optional[str]
 ) -> bool:
     return (
         accept_header == WILDCARD_ACCEPT_HEADER
         or accept_header == response_content_type
+        or accept_header == extract_root_type(response_content_type)
     )
 
 
