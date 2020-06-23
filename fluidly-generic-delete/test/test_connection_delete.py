@@ -1,4 +1,3 @@
-import json
 from unittest import mock
 from unittest.mock import MagicMock, Mock
 
@@ -6,6 +5,7 @@ import pytest
 
 from fluidly.generic_delete.connection_delete import DeleteConnectionConsumer
 from fluidly.pubsub.message import Message
+from fluidly.pubsub.tests import message_from_dict
 
 
 @pytest.fixture
@@ -19,11 +19,6 @@ def mock_message(payload: str, attributes: dict = None):
     pubsub_message.attributes = attributes
 
     return Message(pubsub_message)
-
-
-def message_from_dict(payload_dict: dict, attributes: dict = None):
-    dict_as_json = json.dumps(payload_dict)
-    return mock_message(dict_as_json, attributes)
 
 
 def test_delete_by_connection_id_when_table_valid(mock_session):
