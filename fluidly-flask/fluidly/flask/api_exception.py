@@ -1,11 +1,11 @@
 import json
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from flask import Response
 
 
 class APIException(Exception):
-    def __init__(self, status: str, title: str, detail: Optional[str] = None):
+    def __init__(self, status: int, title: str, detail: Optional[str] = None):
         """While using APIException don't forget to register custom error
         handler:
 
@@ -15,7 +15,7 @@ class APIException(Exception):
         self.status = status
         self.detail = detail
 
-    def to_dict(self) -> Dict[str, Optional[str]]:
+    def to_dict(self) -> Dict[str, Optional[Union[str, int]]]:
         return {"title": self.title, "status": self.status, "detail": self.detail}
 
 
