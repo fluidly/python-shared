@@ -11,6 +11,9 @@ def pubsub_log_entrypoint(func):
         logger = logger.new(callback=func.__qualname__)
         start = time.time()
 
+        publish_time = message.publish_time
+        message_age = time.time() - publish_time.timestamp()
+
         try:
             result = func(message, *args, **kwargs)
         except Exception:
@@ -21,6 +24,7 @@ def pubsub_log_entrypoint(func):
                 success=False,
                 exc_info=True,
                 message=message.data,
+                message_age=message_age,
                 attributes=message.attributes,
                 connection_id=message.attributes.get("connection_id"),
             )
