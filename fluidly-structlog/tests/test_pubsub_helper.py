@@ -6,8 +6,6 @@ import pytest
 from fluidly.structlog import pubsub_helper
 from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint_class
 
-mock_message = MagicMock(attributes={})
-
 
 @pytest.fixture()
 def mock_structlog(monkeypatch):
@@ -22,6 +20,8 @@ def test_pubsub_log_entrypoint(mock_structlog):
         def test_func(self, session, organisation):
             pass
 
+    mock_message = MagicMock(attributes={})
+
     TestClass().test_func("session", mock_message)
     assert mock_structlog.info.called
 
@@ -32,12 +32,11 @@ def test_pubsub_log_entrypoint_on_error(mock_structlog):
         def test_func(self, session, organisation):
             raise RuntimeError
 
-    throws_error = False
-    try:
+    mock_message = MagicMock(attributes={})
+
+    with pytest.raises(RuntimeError):
         TestClass().test_func("session", mock_message)
-    except RuntimeError:
-        throws_error = True
-    assert throws_error
+
     assert mock_structlog.error.called
     args = mock_structlog.error.call_args
     assert args[1].pop("message_age")
