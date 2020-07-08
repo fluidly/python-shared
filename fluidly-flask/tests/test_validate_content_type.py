@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 from flask import Response, request
 
-import fluidly.flask.validate_content_type as module
+from fluidly.flask import validate_content_type as module
 from fluidly.flask.validate_content_type import validate_content_type
 
 
