@@ -56,7 +56,6 @@ def test_upsert():
     stmt = get_on_conflict_stmt(
         stmt, ["id"], ["id"], where=stmt.excluded.id == table.c.id
     )
-    print(format_statement(stmt))
     assert (
         format_statement(stmt)
         == "INSERT INTO some_model (last_seen_at, first_seen_at, id) VALUES (now(), now(), 1) ON CONFLICT (id) DO UPDATE SET last_seen_at = now(), id = excluded.id WHERE excluded.id = some_model.id"
@@ -69,7 +68,6 @@ def test_upsert_without_timestamp_mixin():
     stmt = get_on_conflict_stmt(
         stmt, ["id"], ["id"], where=stmt.excluded.id == table.c.id
     )
-    print(format_statement(stmt))
     assert (
         format_statement(stmt)
         == "INSERT INTO another_model (id) VALUES (1) ON CONFLICT (id) DO UPDATE SET id = excluded.id WHERE excluded.id = another_model.id"
