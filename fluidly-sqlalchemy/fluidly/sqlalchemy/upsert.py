@@ -1,8 +1,13 @@
 from datetime import datetime
-from typing import Any, List
+from typing import Any, Dict, List, Optional
 
+from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.engine import ResultProxy
+from sqlalchemy.orm.session import Session
 from sqlalchemy.sql import Insert
+
+from fluidly.pubsub.message import Message
 
 
 def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
@@ -23,23 +28,23 @@ def update_required(normalised_table: Any, stmt: Any, refresh_data: bool) -> Any
 
 
 def upsert_entity(
-    indexes,
-    keys_mapping,
-    message,
-    model,
-    session,
-    refresh_data=False,
-    return_inserted=False,
-    returning: List = None,
-):
+    indexes: List[str],
+    keys_mapping: Dict[str, str],
+    message: Message,
+    table: Table,
+    session: Session,
+    refresh_data: bool = False,
+    return_inserted: bool = False,
+    returning: Optional[List[Column]] = None,
+) -> ResultProxy:
     """Upserts fields in db based on incoming message
     Args:
-        indexes (list[str]): List of indexes to upsert on.
-        keys_mapping (dict): Mapping of message keys to column names values.
-        message (fluidly.pubsub.message.Message): Message containing data.
-        model (SqlAlchemy.Model): SqlAlchemy Model to be updated.
-        session (SqlAlchemy.Session): SqlAlchemy db session.
-        refresh_data (bool, optional): Should we upsert when updated_at is the same?
+        indexes: List of indexes to upsert on.
+        keys_mapping: Mapping of message keys to column names values.
+        message: Message containing data.
+        table: SqlAlchemy table to be updated.
+        session: SqlAlchemy db session.
+        refresh_data: Should we upsert when updated_at is the same?
 )
     """
 
@@ -54,9 +59,9 @@ def upsert_entity(
         for attribute in message_attributes
     }
 
-    stmt = insert(model).values(values_to_insert)
+    stmt = insert(table).values(values_to_insert)
     stmt = get_on_conflict_stmt(
-        stmt, indexes, keys_to_update, where=update_required(model, stmt, refresh_data)
+        stmt, indexes, keys_to_update, where=update_required(table, stmt, refresh_data)
     )
 
     if returning:
