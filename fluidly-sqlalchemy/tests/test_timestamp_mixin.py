@@ -58,7 +58,7 @@ def test_upsert():
     )
     assert (
         format_statement(stmt)
-        == "INSERT INTO some_model (last_seen_at, first_seen_at, id) VALUES (now(), now(), 1) ON CONFLICT (id) DO UPDATE SET last_seen_at = now(), id = excluded.id WHERE excluded.id = some_model.id"
+        == "INSERT INTO some_model (last_seen_at, first_seen_at, id) VALUES (now(), now(), 1) ON CONFLICT (id) DO UPDATE SET last_seen_at = %(param_1)s, id = excluded.id WHERE excluded.id = some_model.id"
     )
 
 

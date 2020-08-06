@@ -1,6 +1,6 @@
+from datetime import datetime
 from typing import Any
 
-from sqlalchemy import func
 from sqlalchemy.sql import Insert
 
 
@@ -8,7 +8,7 @@ def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Ins
     values = {attr: getattr(stmt.excluded, attr) for attr in args}
 
     if hasattr(stmt.table.c, "last_seen_at") and "last_seen_at" not in values:
-        values["last_seen_at"] = func.now()
+        values["last_seen_at"] = datetime.utcnow()
 
     return stmt.on_conflict_do_update(index_elements=index, set_=values, where=where)
 
