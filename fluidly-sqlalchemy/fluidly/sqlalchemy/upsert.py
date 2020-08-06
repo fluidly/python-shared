@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Optional
 
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm.session import Session
 from sqlalchemy.sql import Insert
 
 from fluidly.pubsub.message import Message
@@ -31,7 +30,6 @@ def upsert_entity(
     keys_mapping: Dict[str, str],
     message: Message,
     table: Table,
-    session: Session,
     refresh_data: bool = False,
     return_inserted: bool = False,
     returning: Optional[List[Column]] = None,
@@ -44,7 +42,6 @@ def upsert_entity(
         keys_mapping: Mapping of message keys to column names values.
         message: Message containing data.
         table: SqlAlchemy table to be updated.
-        session: SqlAlchemy db session.
         refresh_data: Should we upsert when updated_at is the same?
     """
 
