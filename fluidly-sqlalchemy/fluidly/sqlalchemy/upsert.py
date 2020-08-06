@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Optional
 
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.engine import ResultProxy
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql import Insert
 
@@ -36,8 +35,10 @@ def upsert_entity(
     refresh_data: bool = False,
     return_inserted: bool = False,
     returning: Optional[List[Column]] = None,
-) -> ResultProxy:
-    """Upserts fields in db based on incoming message
+) -> Insert:
+    """Constructs an upserts statement with fields in database based on
+    incoming message.
+
     Args:
         indexes: List of indexes to upsert on.
         keys_mapping: Mapping of message keys to column names values.
@@ -45,7 +46,6 @@ def upsert_entity(
         table: SqlAlchemy table to be updated.
         session: SqlAlchemy db session.
         refresh_data: Should we upsert when updated_at is the same?
-)
     """
 
     message_attributes = set(keys_mapping.keys())
@@ -67,4 +67,4 @@ def upsert_entity(
     if returning:
         stmt = stmt.returning(*returning)
 
-    return session.execute(stmt)
+    return stmt
