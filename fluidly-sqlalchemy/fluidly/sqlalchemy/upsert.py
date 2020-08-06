@@ -1,7 +1,11 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict, List, Optional
 
+from sqlalchemy import Column, Table
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
+
+from fluidly.pubsub.message import Message
 
 
 def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
@@ -19,3 +23,45 @@ def update_required(normalised_table: Any, stmt: Any, refresh_data: bool) -> Any
         if not refresh_data
         else stmt.excluded.updated_at >= normalised_table.c.updated_at
     )
+
+
+def upsert_entity(
+    indexes: List[str],
+    keys_mapping: Dict[str, str],
+    message: Message,
+    table: Table,
+    refresh_data: bool = False,
+    return_inserted: bool = False,
+    returning: Optional[List[Column]] = None,
+) -> Insert:
+    """Constructs an upserts statement with fields in database based on
+    incoming message.
+
+    Args:
+        indexes: List of indexes to upsert on.
+        keys_mapping: Mapping of message keys to column names values.
+        message: Message containing data.
+        table: SqlAlchemy table to be updated.
+        refresh_data: Should we upsert when updated_at is the same?
+    """
+
+    message_attributes = set(keys_mapping.keys())
+    column_names = set(keys_mapping.values())
+
+    keys_to_insert = column_names
+    keys_to_update = keys_to_insert - set(indexes)
+
+    values_to_insert = {
+        keys_mapping[attribute]: message.data.get(attribute)
+        for attribute in message_attributes
+    }
+
+    stmt = insert(table).values(values_to_insert)
+    stmt = get_on_conflict_stmt(
+        stmt, indexes, keys_to_update, where=update_required(table, stmt, refresh_data)
+    )
+
+    if returning:
+        stmt = stmt.returning(*returning)
+
+    return stmt
