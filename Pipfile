@@ -18,7 +18,7 @@ fluidly-generic-query = {path = "./fluidly-generic-query", editable = true}
 fluidly-structlog = {path = "./fluidly-structlog", editable = true}
 fluidly-pubsub = {path = "./fluidly-pubsub", editable = true}
 fluidly-sqlalchemy = {path = "./fluidly-sqlalchemy", editable = true}
-fluidly-flask = {path = "./fluidly-flask", editable = true}
+fluidly-flask = {editable = true, path = "./fluidly-flask"}
 fluidly-auth = {path = "./fluidly-auth", editable = true}
 
 [requires]
@@ -26,8 +26,8 @@ python_version = "3.7"
 
 [scripts]
 setup = "bash -c \"cp .env.template .env\""
-format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort -rc . && black .\""
-format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort -rc -c . && black --check --diff .\""
+format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort . && black .\""
+format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort -c . && black --check --diff .\""
 lint = "bash -c \"flake8 fluidly-* && yamllint .\""
 type-check = "bash -c \"mypy fluidly-auth/fluidly/auth/ --strict && mypy fluidly-pubsub/fluidly/pubsub/ --strict && mypy fluidly-structlog/fluidly/structlog/ --strict && mypy fluidly-sqlalchemy/fluidly/sqlalchemy/ --strict && mypy fluidly-flask/fluidly/flask/ --strict\""
 
