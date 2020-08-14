@@ -2,7 +2,7 @@ import sqlalchemy as db
 from sqlalchemy import func
 
 
-class UserActionMixin(object):
+class UserActionMixin:
     # Creation
     created_at = db.Column(
         db.DateTime, default=func.now(), server_default=func.now(), nullable=False
