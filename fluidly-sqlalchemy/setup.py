@@ -50,6 +50,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=packages,
+    package_data={"fluidly.sqlalchemy": ["py.typed"]},
     namespace_packages=["fluidly"],
     install_requires=REQUIRED,
     extras_require=EXTRAS,
