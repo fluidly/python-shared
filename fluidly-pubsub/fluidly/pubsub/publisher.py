@@ -1,9 +1,11 @@
+from typing import Optional
+
 from google.cloud.pubsub_v1 import PublisherClient
 
-publisher = None
+publisher: Optional[PublisherClient] = None
 
 
-def get_pubsub_publisher():
+def get_pubsub_publisher() -> PublisherClient:
     global publisher
 
     if publisher is None:
