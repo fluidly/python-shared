@@ -5,8 +5,6 @@ from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
 
-from fluidly.pubsub.message import Message
-
 
 def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
     values = {attr: getattr(stmt.excluded, attr) for attr in args}
@@ -28,10 +26,9 @@ def update_required(normalised_table: Any, stmt: Any, refresh_data: bool) -> Any
 def upsert_entity(
     indexes: List[str],
     keys_mapping: Dict[str, str],
-    message: Message,
+    new_data: Dict[str, Any],
     table: Table,
     refresh_data: bool = False,
-    return_inserted: bool = False,
     returning: Optional[List[Column]] = None,
 ) -> Insert:
     """Constructs an upserts statement with fields in database based on
@@ -40,7 +37,7 @@ def upsert_entity(
     Args:
         indexes: List of indexes to upsert on.
         keys_mapping: Mapping of message keys to column names values.
-        message: Message containing data.
+        new_data: Dictionary containing new entity's data.
         table: SqlAlchemy table to be updated.
         refresh_data: Should we upsert when updated_at is the same?
     """
@@ -52,7 +49,7 @@ def upsert_entity(
     keys_to_update = keys_to_insert - set(indexes)
 
     values_to_insert = {
-        keys_mapping[attribute]: message.data.get(attribute)
+        keys_mapping[attribute]: new_data.get(attribute)
         for attribute in message_attributes
     }
 
