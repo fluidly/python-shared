@@ -21,6 +21,22 @@ def test_get_on_conflict_stmt():
     assert args_list[0][1]["where"] == where
 
 
+def test_get_on_conflict_stmt_do_nothing():
+    stmt = mock.MagicMock()
+    index = mock.MagicMock()
+    where = mock.MagicMock()
+
+    get_on_conflict_stmt(stmt, index, [], where)
+
+    assert not stmt.on_conflict_do_update.called
+
+    assert stmt.on_conflict_do_nothing.called
+
+    args_list = stmt.on_conflict_do_nothing.call_args_list
+
+    assert args_list[0][1]["index_elements"] == index
+
+
 def test_update_required_refresh_data_true_return_false():
     normalised_table = mock.MagicMock()
     stmt = mock.MagicMock()
