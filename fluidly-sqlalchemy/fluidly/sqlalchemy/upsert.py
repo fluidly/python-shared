@@ -12,6 +12,9 @@ def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Ins
     if hasattr(stmt.table.c, "last_seen_at") and "last_seen_at" not in values:
         values["last_seen_at"] = datetime.utcnow()
 
+    if not args:
+        return stmt.on_conflict_do_nothing(index_elements=index)
+
     return stmt.on_conflict_do_update(index_elements=index, set_=values, where=where)
 
 
