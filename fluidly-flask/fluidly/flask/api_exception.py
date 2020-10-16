@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 
 from flask import Response
 
@@ -15,7 +15,7 @@ class APIException(Exception):
         self.status = status
         self.detail = detail
 
-    def to_dict(self) -> Dict[str, Optional[Union[str, int]]]:
+    def to_dict(self) -> Dict[str, Optional[Union[str, int, Dict[str, List[str]]]]]:
         return {"title": self.title, "status": self.status, "detail": self.detail}
 
 
