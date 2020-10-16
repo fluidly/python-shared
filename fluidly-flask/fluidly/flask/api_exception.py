@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Optional, Union, List
+from typing import Dict, List, Optional, Union
 
 from flask import Response
 
