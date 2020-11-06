@@ -5,7 +5,9 @@ from flask import Response
 
 
 class APIException(Exception):
-    def __init__(self, status: int, title: str, detail: Optional[str] = None):
+    def __init__(
+        self, status: int, title: str, detail: Optional[Dict[str, List[str]]] = None
+    ):
         """While using APIException don't forget to register custom error
         handler:
 
