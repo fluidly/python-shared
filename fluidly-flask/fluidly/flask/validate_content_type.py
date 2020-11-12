@@ -59,7 +59,7 @@ def validate_content_type(response: Response) -> Response:
 
         logger.warning(
             "Incompatible request Accept header and response content-type",
-            args=dict(request.view_args),
+            args=dict(request.view_args) if request.view_args is not None else None,
             headers=dict(headers),
             url=request.full_path,
             request_accept_header=accept_header,
