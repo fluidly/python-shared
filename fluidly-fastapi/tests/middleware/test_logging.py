@@ -4,8 +4,8 @@ import pytest
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
-from fluidly.fastapi import middleware
-from fluidly.fastapi.middleware import LoggingMiddleware
+from fluidly.fastapi.middleware import logging
+from fluidly.fastapi.middleware.logging import LoggingMiddleware
 
 
 def default_test_route():
@@ -15,7 +15,7 @@ def default_test_route():
 @pytest.fixture()
 def mock_structlog(monkeypatch):
     get_logger_mock = mock.Mock()
-    monkeypatch.setattr(middleware, "get_logger", get_logger_mock)
+    monkeypatch.setattr(logging, "get_logger", get_logger_mock)
     return get_logger_mock.return_value
 
 
