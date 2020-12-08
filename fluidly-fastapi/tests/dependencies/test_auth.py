@@ -6,57 +6,49 @@ import pytest
 from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 
-from fluidly.fastapi import dependencies
-from fluidly.fastapi.dependencies import get_admin_user, get_authorised_user
+from fluidly.fastapi.dependencies import auth
+from fluidly.fastapi.dependencies.auth import get_admin_user, get_authorised_user
 
 
 @pytest.fixture
 def mocked_user_permissions_throws_error(monkeypatch):
     check_user_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.delattr(dependencies, "check_user_permissions")
+    monkeypatch.delattr(auth, "check_user_permissions")
     yield check_user_permissions_mock
 
 
 @pytest.fixture
 def mocked_not_given_permissions(monkeypatch):
     check_user_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.setattr(
-        dependencies, "check_user_permissions", check_user_permissions_mock
-    )
+    monkeypatch.setattr(auth, "check_user_permissions", check_user_permissions_mock)
     yield check_user_permissions_mock
 
 
 @pytest.fixture
 def mocked_given_permissions(monkeypatch):
     check_user_permissions_mock = mock.MagicMock(return_value=True)
-    monkeypatch.setattr(
-        dependencies, "check_user_permissions", check_user_permissions_mock
-    )
+    monkeypatch.setattr(auth, "check_user_permissions", check_user_permissions_mock)
     yield check_user_permissions_mock
 
 
 @pytest.fixture
 def mocked_permissions_throws_exception(monkeypatch):
     check_admin_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.delattr(dependencies, "check_admin_permissions")
+    monkeypatch.delattr(auth, "check_admin_permissions")
     yield check_admin_permissions_mock
 
 
 @pytest.fixture
 def mocked_admin_not_given_permissions(monkeypatch):
     check_admin_permissions_mock = mock.MagicMock(return_value=False)
-    monkeypatch.setattr(
-        dependencies, "check_admin_permissions", check_admin_permissions_mock
-    )
+    monkeypatch.setattr(auth, "check_admin_permissions", check_admin_permissions_mock)
     yield check_admin_permissions_mock
 
 
 @pytest.fixture
 def mocked_admin_given_permissions(monkeypatch):
     check_admin_permissions_mock = mock.MagicMock(return_value=True)
-    monkeypatch.setattr(
-        dependencies, "check_admin_permissions", check_admin_permissions_mock
-    )
+    monkeypatch.setattr(auth, "check_admin_permissions", check_admin_permissions_mock)
     yield check_admin_permissions_mock
 
 
