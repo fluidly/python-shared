@@ -50,7 +50,9 @@ structlog.configure(
         structlog.processors.format_exc_info,
         add_log_level_as_severity,
         structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
+        structlog.dev.ConsoleRenderer()
+        if "PRETTY_LOGS" in os.environ
+        else structlog.processors.JSONRenderer(),
     ],
     context_class=wrap_dict(dict),
 )
