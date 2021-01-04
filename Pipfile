@@ -30,6 +30,6 @@ setup = "bash -c \"cp .env.template .env\""
 format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort . && black .\""
 format-check = "bash -c \"autoflake --remove-all-unused-imports -c -r . && isort -c . && black --check --diff .\""
 lint = "bash -c \"flake8 fluidly-* && yamllint .\""
-type-check = "bash -c \"mypy fluidly-auth/fluidly/auth/ --strict && mypy fluidly-pubsub/fluidly/pubsub/ --strict && mypy fluidly-structlog/fluidly/structlog/ --strict && mypy fluidly-sqlalchemy/fluidly/sqlalchemy/ --strict && mypy fluidly-flask/fluidly/flask/ --strict && mypy fluidly-fastapi/fluidly/fastapi/ --strict\""
+type-check = "bash -c \"find . -name 'fluidly-*' ! -name '*-generic-*' -type d -print0 | xargs -0 -n1 -I {} mypy '{}/fluidly/' --strict\""
 
 [packages]
