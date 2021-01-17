@@ -14,7 +14,7 @@ def test_fake_publisher_passes_on_messages():
     fake_publisher.publish(topic, "{}")
 
     args, kwargs = consumer.call_args
-    session, message = args
+    message, session, kw = args
     assert session == fake_session
     assert message.data == {}
 
