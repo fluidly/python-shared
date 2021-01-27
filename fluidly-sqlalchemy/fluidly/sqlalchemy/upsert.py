@@ -1,10 +1,10 @@
+import collections
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
-import collections
 
 
 def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
