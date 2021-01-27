@@ -1,6 +1,6 @@
 import collections
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
@@ -30,7 +30,7 @@ def update_required(normalised_table: Any, stmt: Any, refresh_data: bool) -> Any
 def upsert_entity(
     indexes: List[str],
     keys_mapping: Dict[str, str],
-    new_data: Dict[str, Any],
+    new_data: Union[Dict[str, Any], List[Dict[str, any]]],
     table: Table,
     refresh_data: bool = False,
     returning: Optional[List[Column]] = None,
