@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
+import collections
 
 
 def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
@@ -51,10 +52,19 @@ def upsert_entity(
     keys_to_insert = column_names
     keys_to_update = keys_to_insert - set(indexes)
 
-    values_to_insert = {
-        keys_mapping[attribute]: new_data.get(attribute)
-        for attribute in message_attributes
-    }
+    if isinstance(new_data, collections.Mapping):
+        values_to_insert = {
+            keys_mapping[attribute]: new_data.get(attribute)
+            for attribute in message_attributes
+        }
+    else:
+        values_to_insert = [
+            {
+                keys_mapping[attribute]: datum.get(attribute)
+                for attribute in message_attributes
+            }
+            for datum in new_data
+        ]
 
     stmt = insert(table).values(values_to_insert)
     stmt = get_on_conflict_stmt(
