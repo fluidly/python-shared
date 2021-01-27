@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: format
+        name: format
+        entry: pipenv run format
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: lint
+        name: lint
+        entry: pipenv run lint
+        language: system
+        types: [python, yaml]
+        pass_filenames: false
+      - id: type-check
+        name: type-check
+        entry: pipenv run type-check
+        language: system
+        types: [python]
+        pass_filenames: false
