@@ -30,7 +30,7 @@ def update_required(normalised_table: Any, stmt: Any, refresh_data: bool) -> Any
 def upsert_entity(
     indexes: List[str],
     keys_mapping: Dict[str, str],
-    new_data: Union[Dict[str, Any], List[Dict[str, any]]],
+    new_data: Union[Dict[str, Any], List[Dict[str, Any]]],
     table: Table,
     refresh_data: bool = False,
     returning: Optional[List[Column]] = None,
@@ -57,16 +57,17 @@ def upsert_entity(
             keys_mapping[attribute]: new_data.get(attribute)
             for attribute in message_attributes
         }
+        stmt = insert(table).values(values_to_insert)
     else:
-        values_to_insert = [
+        list_to_insert = [
             {
                 keys_mapping[attribute]: datum.get(attribute)
                 for attribute in message_attributes
             }
             for datum in new_data
         ]
+        stmt = insert(table).values(list_to_insert)
 
-    stmt = insert(table).values(values_to_insert)
     stmt = get_on_conflict_stmt(
         stmt, indexes, keys_to_update, where=update_required(table, stmt, refresh_data)
     )
