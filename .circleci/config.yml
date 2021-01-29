@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   test:
     resource_class: small
-    working_directory: /app/src
+    working_directory: ~/app/src
     docker:
       - image: circleci/python:3.7
     steps:
