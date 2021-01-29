@@ -1,17 +1,10 @@
+import os
+
 import nox
 
 DEFAULT_PYTHON_VERSION = "3.7"
 
-PACKAGES = [
-    "fluidly-generic-delete",
-    "fluidly-generic-query",
-    "fluidly-structlog",
-    "fluidly-pubsub",
-    "fluidly-sqlalchemy",
-    "fluidly-flask",
-    "fluidly-auth",
-    "fluidly-fastapi",
-]
+PACKAGES = [f for f in os.listdir(".") if os.path.isdir(f) and f.startswith("fluidly-")]
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
