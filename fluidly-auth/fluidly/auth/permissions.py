@@ -82,7 +82,9 @@ def check_user_permissions(
     )
 
 
-def check_admin_permissions(original_payload: Any, fluidly_api_url: Optional[str] = None) -> bool:
+def check_admin_permissions(
+    original_payload: Any, fluidly_api_url: Optional[str] = None
+) -> bool:
     return check_permissions(
         original_payload,
         f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/admin",
