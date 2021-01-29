@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Any
+from typing import Any, Optional
 
 from fluidly.auth.jwt import generate_jwt
 from fluidly.auth.jwt_requests import make_jwt_request
@@ -15,7 +15,7 @@ class UserPermissionsPayloadException(Exception):
     pass
 
 
-def get_fluidly_api_url(fluidly_api_url: str = None) -> str:
+def get_fluidly_api_url(fluidly_api_url: Optional[str] = None) -> str:
     if not fluidly_api_url:
         fluidly_api_url = os.getenv("FLUIDLY_API_URL")
 
@@ -73,7 +73,7 @@ def check_permissions(original_payload: Any, request_url: str, **kwargs: Any) ->
 
 
 def check_user_permissions(
-    original_payload: Any, connection_id: str, fluidly_api_url: str = None
+    original_payload: Any, connection_id: str, fluidly_api_url: Optional[str] = None
 ) -> bool:
     return check_permissions(
         original_payload,
@@ -82,7 +82,7 @@ def check_user_permissions(
     )
 
 
-def check_admin_permissions(original_payload: Any, fluidly_api_url: str = None) -> bool:
+def check_admin_permissions(original_payload: Any, fluidly_api_url: Optional[str] = None) -> bool:
     return check_permissions(
         original_payload,
         f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/admin",
