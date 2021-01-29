@@ -19,7 +19,7 @@ jobs:
           command: nox -s lint
       - run:
           name: Run type-check
-          command: nox -s type-check
+          command: nox -s type_check
       - run:
           name: Run pytest
           command: nox -s pytest
