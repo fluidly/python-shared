@@ -1,6 +1,5 @@
 import os
 import time
-
 from typing import Any
 
 from fluidly.auth.jwt import generate_jwt
@@ -73,7 +72,9 @@ def check_permissions(original_payload: Any, request_url: str, **kwargs: Any) ->
         raise UserPermissionsPayloadException()
 
 
-def check_user_permissions(original_payload: Any, connection_id: str, fluidly_api_url: str = None) -> bool:
+def check_user_permissions(
+    original_payload: Any, connection_id: str, fluidly_api_url: str = None
+) -> bool:
     return check_permissions(
         original_payload,
         f"{get_fluidly_api_url(fluidly_api_url)}/v1/user-permissions/connections/{connection_id}",
