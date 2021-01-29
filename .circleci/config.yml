@@ -25,7 +25,7 @@ jobs:
           command: nox -s pytest
 
 workflows:
-  "Setup":
+  "Test":
     jobs:
       - test:
           context: PUBLISHING
