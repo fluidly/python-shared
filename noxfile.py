@@ -23,7 +23,7 @@ def setup(session):
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
-def default(session):
+def test(session):
     session.install("pytest", "responses", "freezegun")
 
     for package in PACKAGES:

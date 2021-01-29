@@ -22,7 +22,7 @@ jobs:
           command: nox -s type_check
       - run:
           name: Run pytest
-          command: nox -s pytest
+          command: nox -s test
 
 workflows:
   "Test":
