@@ -5,7 +5,6 @@ import os
 
 from setuptools import find_packages, setup
 
-# Package meta-data.
 NAME = "fluidly-structlog"
 DESCRIPTION = "Logging config and helpers."
 URL = "https://github.com/fluidly/python-shared"
@@ -14,15 +13,11 @@ AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.6.0"
 VERSION = "0.1.0"
 
-# What packages are required for this module to be executed?
 REQUIRED = ["structlog"]
 
-# What packages are optional?
 EXTRAS = {
     # 'fancy feature': ['django'],
 }
-
-# Setup boilerplate below this line.
 
 try:
     package_root = os.path.abspath(os.path.dirname(__file__))

@@ -3,8 +3,16 @@ import os
 import nox
 
 DEFAULT_PYTHON_VERSION = "3.7"
+FORMAT_DEPENDENCIES = ["autoflake", "black", "isort"]
 
 PACKAGES = [f for f in os.listdir(".") if os.path.isdir(f) and f.startswith("fluidly-")]
+
+nox.options.sessions = ["format", "lint", "type_check", "test"]
+
+
+def install_local_packages_as_editable(session, packages):
+    for package in packages:
+        session.install("-e", package, env={"DEV": "1"})
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
@@ -19,8 +27,7 @@ def setup(session):
 def test(session):
     session.install("pytest", "responses", "freezegun")
 
-    for package in PACKAGES:
-        session.install("-e", package)
+    install_local_packages_as_editable(session, PACKAGES)
 
     session.run(
         "pytest",
@@ -38,7 +45,7 @@ def lint(session):
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def format(session):
-    session.install("autoflake", "black", "isort")
+    session.install(*FORMAT_DEPENDENCIES)
 
     session.run("autoflake", "--remove-all-unused-imports", "-i", "-r", ".")
     session.run("isort", ".")
@@ -47,7 +54,7 @@ def format(session):
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def format_check(session):
-    session.install("autoflake", "black", "isort")
+    session.install(*FORMAT_DEPENDENCIES)
 
     session.run("autoflake", "--remove-all-unused-imports", "-c", "-r", ".")
     session.run("isort", "-c", ".")
@@ -58,8 +65,7 @@ def format_check(session):
 def type_check(session):
     session.install("mypy")
 
-    for package in PACKAGES:
-        session.install("-e", package)
+    install_local_packages_as_editable(session, PACKAGES)
 
     for package in PACKAGES:
         if "-generic-" in package:
