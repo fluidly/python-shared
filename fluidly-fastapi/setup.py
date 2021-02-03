@@ -15,7 +15,7 @@ VERSION = "0.1.0"
 
 
 def local_dependencies(*packages):
-    if os.environ.get("DEV"):
+    if os.environ.get("INSTALL_EDITABLE"):
         return []
 
     return [

@@ -12,7 +12,7 @@ nox.options.sessions = ["format", "lint", "type_check", "test"]
 
 def install_local_packages_as_editable(session, packages):
     for package in packages:
-        session.install("-e", package, env={"DEV": "1"})
+        session.install("-e", package, env={"INSTALL_EDITABLE": "1"})
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
