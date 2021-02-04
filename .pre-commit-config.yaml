@@ -3,19 +3,19 @@ repos:
     hooks:
       - id: format
         name: format
-        entry: pipenv run format
+        entry: nox -s format
         language: system
         types: [python]
         pass_filenames: false
       - id: lint
         name: lint
-        entry: pipenv run lint
+        entry: nox -s lint
         language: system
         types: [python, yaml]
         pass_filenames: false
       - id: type-check
         name: type-check
-        entry: pipenv run type-check
+        entry: nox -s type_check
         language: system
         types: [python]
         pass_filenames: false
