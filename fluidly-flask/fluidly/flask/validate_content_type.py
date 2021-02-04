@@ -10,8 +10,8 @@ WILDCARD_ACCEPT_HEADER = "*/*"
 def extract_root_type(content_type: Optional[str]) -> Optional[str]:
     """Examples of subset content types are:
 
-        application/problem+json
-        image/svg+xml
+    application/problem+json
+    image/svg+xml
     """
     if not content_type:
         return content_type

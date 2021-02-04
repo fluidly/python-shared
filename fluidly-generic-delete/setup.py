@@ -5,7 +5,6 @@ import os
 
 from setuptools import find_packages, setup
 
-# Package meta-data.
 NAME = "fluidly-generic-delete"
 DESCRIPTION = "Generic subscription for deleting things"
 URL = "https://github.com/fluidly/generic-delete"
@@ -14,18 +13,22 @@ AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.6.0"
 VERSION = "0.1.0"
 
-# What packages are required for this module to be executed?
+
+def local_dependencies(*packages):
+    if os.environ.get("INSTALL_EDITABLE"):
+        return []
+
+    return [
+        f"{package} @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory={package}"
+        for package in packages
+    ]
+
+
 REQUIRED = [
     "sqlalchemy",
-    "fluidly-structlog @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-structlog",
-    "fluidly-pubsub @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory=fluidly-pubsub",
-]
-# What packages are optional?
-EXTRAS = {
-    # 'fancy feature': ['django'],
-}
+] + local_dependencies("fluidly-structlog", "fluidly-pubsub")
 
-# Setup boilerplate below this line.
+EXTRAS = {}
 
 try:
     package_root = os.path.abspath(os.path.dirname(__file__))
