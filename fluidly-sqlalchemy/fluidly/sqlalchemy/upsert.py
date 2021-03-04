@@ -1,5 +1,6 @@
 import collections
 from datetime import datetime
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from sqlalchemy import Column, Table
@@ -7,13 +8,24 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
 
 
-def get_on_conflict_stmt(stmt: Insert, index: Any, args: Any, where: Any) -> Insert:
+class ConflictAction(Enum):
+    DO_NOTHING = "DO_NOTHING"
+    DO_UPDATE = "DO_UPDATE"
+
+
+def get_on_conflict_stmt(
+    stmt: Insert,
+    index: Any,
+    args: Any,
+    where: Any = None,
+    action: ConflictAction = ConflictAction.DO_UPDATE,
+) -> Insert:
     values = {attr: getattr(stmt.excluded, attr) for attr in args}
 
     if hasattr(stmt.table.c, "last_seen_at") and "last_seen_at" not in values:
         values["last_seen_at"] = datetime.utcnow()
 
-    if not args:
+    if not args or action == ConflictAction.DO_NOTHING:
         return stmt.on_conflict_do_nothing(index_elements=index)
 
     return stmt.on_conflict_do_update(index_elements=index, set_=values, where=where)
@@ -34,6 +46,7 @@ def upsert_entity(
     table: Table,
     refresh_data: bool = False,
     returning: Optional[List[Column]] = None,
+    action: ConflictAction = ConflictAction.DO_UPDATE,
 ) -> Insert:
     """Constructs an upserts statement with fields in database based on
     incoming message.
@@ -44,6 +57,7 @@ def upsert_entity(
         new_data: Dictionary containing new entity's data.
         table: SqlAlchemy table to be updated.
         refresh_data: Should we upsert when updated_at is the same?
+        action: On conflict action to be perfomed.
     """
 
     message_attributes = set(keys_mapping.keys())
@@ -69,7 +83,11 @@ def upsert_entity(
         stmt = insert(table).values(list_to_insert)
 
     stmt = get_on_conflict_stmt(
-        stmt, indexes, keys_to_update, where=update_required(table, stmt, refresh_data)
+        stmt=stmt,
+        index=indexes,
+        args=keys_to_update,
+        where=update_required(table, stmt, refresh_data),
+        action=action,
     )
 
     if returning:
