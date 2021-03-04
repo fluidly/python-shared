@@ -5,7 +5,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from fluidly.sqlalchemy.db import db_session
 from fluidly.sqlalchemy.timestamp_mixin import TimestampMixin
-from fluidly.sqlalchemy.upsert import get_on_conflict_stmt
 
 Base = declarative_base()
 

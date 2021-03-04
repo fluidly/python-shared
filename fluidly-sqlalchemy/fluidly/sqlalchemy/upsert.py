@@ -1,11 +1,11 @@
 import collections
 from datetime import datetime
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from sqlalchemy import Column, Table
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import Insert
-from enum import Enum
 
 
 class ConflictAction(Enum):
