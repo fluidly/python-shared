@@ -19,7 +19,7 @@ def request_headers(if_modified_since=None, service_account=False, email=None):
         "scope": "openid email",
     }
     if email:
-        claims["email"] = email
+        claims["https://api.fluidly.com/email"] = email
 
     endpoint_header = json.dumps(
         {
