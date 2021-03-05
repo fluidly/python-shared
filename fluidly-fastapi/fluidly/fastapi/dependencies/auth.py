@@ -24,6 +24,7 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
     user_info = json.loads(decoded_user_info)
     claims = json.loads(user_info.get("claims", "{}"))
 
+    email = claims.get("https://api.fluidly.com/email", None)
     auth0_claims = claims.get("https://api.fluidly.com/app_metadata", {})
     internal_claims = claims.get("https://api.fluidly.com/internal_metadata", {})
 
@@ -46,7 +47,7 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
             status_code=403, detail="An issue occurred while fetching permissions"
         )
 
-    return {"connection_id": connection_id, "user_id": user_id}
+    return {"connection_id": connection_id, "user_id": user_id, "email": email}
 
 
 def get_admin_user(request: Request) -> Dict[str, Any]:
@@ -62,6 +63,7 @@ def get_admin_user(request: Request) -> Dict[str, Any]:
     # to parse the claims attribute
     claims = json.loads(user_info.get("claims", "{}"))
 
+    email = claims.get("https://api.fluidly.com/email", None)
     auth0_claims = claims.get("https://api.fluidly.com/app_metadata", {})
     internal_claims = claims.get("https://api.fluidly.com/internal_metadata", {})
 
@@ -83,4 +85,4 @@ def get_admin_user(request: Request) -> Dict[str, Any]:
             status_code=403, detail="An issue occurred while fetching permissions"
         )
 
-    return {"user_id": user_id_from_token}
+    return {"user_id": user_id_from_token, "email": email}
