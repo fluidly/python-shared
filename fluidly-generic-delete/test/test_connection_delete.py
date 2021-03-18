@@ -2,6 +2,7 @@ from unittest import mock
 from unittest.mock import MagicMock, Mock
 
 import pytest
+from sqlalchemy import Column, MetaData, String, Table
 
 from fluidly.generic_delete.connection_delete import DeleteConnectionConsumer
 from fluidly.pubsub.message import Message
@@ -26,15 +27,13 @@ def test_delete_by_connection_id_when_table_valid(mock_session):
     metadata_mock = Mock()
     tables_mock = Mock()
 
-    table_mock = Mock()
-    columns = Mock()
-
-    table_mock.c = columns
-    columns.get.side_effect = lambda c: {}
+    table_mock = Table(
+        "foo", MetaData(), Column("connection_id", String(), primary_key=True)
+    )
 
     base_mock.metadata = metadata_mock
     metadata_mock.tables = tables_mock
-    tables_mock.values.return_value = [table_mock()]
+    tables_mock.values.return_value = [table_mock]
 
     consumer = DeleteConnectionConsumer(base_mock)
     delete_message = message_from_dict({"connection_id": "test:123"})
