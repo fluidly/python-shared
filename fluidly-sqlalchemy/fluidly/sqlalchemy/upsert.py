@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Mapping
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
@@ -66,7 +66,7 @@ def upsert_entity(
     keys_to_insert = column_names
     keys_to_update = keys_to_insert - set(indexes)
 
-    if isinstance(new_data, collections.Mapping):
+    if isinstance(new_data, Mapping):
         values_to_insert = {
             keys_mapping[attribute]: new_data.get(attribute)
             for attribute in message_attributes
