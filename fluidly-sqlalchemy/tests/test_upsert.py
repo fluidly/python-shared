@@ -29,12 +29,12 @@ def format_statement(s):
 
 
 class TestGetOnConflictStmt:
-    class SomeModel(Base):
+    class SomeConflictModel(Base):
         __tablename__ = "conflict_model"
 
         id = db.Column(db.Integer, primary_key=True)
 
-    some_table = SomeModel.__table__
+    some_table = SomeConflictModel.__table__
 
     class TimestampModel(TimestampMixin, Base):
         __tablename__ = "timestamp_model"
@@ -97,13 +97,13 @@ class TestGetOnConflictStmt:
 
 
 class TestUpsertEntity:
-    class SomeModel(Base):
+    class SomeUpsertModel(Base):
         __tablename__ = "upsert_model"
 
         id = db.Column(db.Integer, primary_key=True)
         updated_at = db.Column(db.DateTime, nullable=False)
 
-    some_table = SomeModel.__table__
+    some_table = SomeUpsertModel.__table__
 
     def test_upsert_with_mapping(self):
         stmt = upsert_entity(
