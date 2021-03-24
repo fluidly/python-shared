@@ -15,6 +15,7 @@ class TopicSpy:
     def __init__(self) -> None:
         self.call_count = 0
         self.call_list: List[str] = []
+        self.calls: List[List[Any]] = []
 
 
 class FakePublisher:
@@ -25,12 +26,18 @@ class FakePublisher:
         self.subscriptions = dict(subscriptions)
         self.topics_called: Dict[str, TopicSpy] = defaultdict(TopicSpy)
 
-    def publish(self, topic: str, data: str, connection_id: str = "") -> MessageFuture:
+    def publish(
+        self, topic: str, data: str, connection_id: str = "", **attrs: Any
+    ) -> MessageFuture:
 
         if topic in self.subscriptions:
             self.subscriptions[topic](self.session, message_from_dict(json.loads(data)))
         self.topics_called[topic].call_count += 1
         self.topics_called[topic].call_list.append(data)
+        self.topics_called[topic].calls.append(
+            [data, {**attrs, "connection_id": connection_id}]
+        )
+
         return MessageFuture()
 
     def topic_path(self, project: str, topic: str) -> str:
