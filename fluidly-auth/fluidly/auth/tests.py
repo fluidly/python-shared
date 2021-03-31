@@ -2,7 +2,9 @@ import json
 from base64 import b64encode
 
 
-def request_headers(if_modified_since=None, service_account=False, email=None):
+def request_headers(
+    if_modified_since=None, service_account=False, email=None, name=None
+):
     # Claims attribute is in string format in the header provided by Cloud Endpoints
     claims = {
         "https://api.fluidly.com/internal_metadata": {
@@ -18,8 +20,12 @@ def request_headers(if_modified_since=None, service_account=False, email=None):
         "azp": "5HIxj76CRK3QCxUa2KlUwJw7vBCly9e5",
         "scope": "openid email",
     }
-    if email:
+
+    if email is not None:
         claims["https://api.fluidly.com/email"] = email
+
+    if name is not None:
+        claims["https://api.fluidly.com/name"] = name
 
     endpoint_header = json.dumps(
         {
