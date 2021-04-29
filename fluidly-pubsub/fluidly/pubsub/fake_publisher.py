@@ -17,6 +17,14 @@ class TopicSpy:
         self.call_list: List[str] = []
         self.calls: List[List[Any]] = []
 
+    @property
+    def last_published_message_data(self) -> Any:
+        return self.calls[-1][0]
+
+    @property
+    def last_published_message_attributes(self) -> Any:
+        return self.calls[-1][1]
+
 
 class FakePublisher:
     def __init__(

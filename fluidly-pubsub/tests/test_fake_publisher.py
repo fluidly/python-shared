@@ -72,3 +72,34 @@ def test_fake_publisher_records_calls_with_connection_id():
     topics_called = fake_publisher.topics_called
 
     assert topics_called[topic].calls[0][1]["connection_id"] == "some_connection_id"
+
+
+def test_fake_publisher_has_last_call_attribute():
+    fake_session = "fake session"
+    topic = "notes topic"
+
+    consumer = mock.Mock()
+    subscriptions = [(topic, consumer)]
+
+    fake_publisher = FakePublisher(fake_session, subscriptions)
+
+    fake_publisher.publish(
+        topic, '{"first": "message"}', connection_id="first_connection_id"
+    )
+    fake_publisher.publish(
+        topic,
+        '{"last": "message"}',
+        some_attribute="stuff",
+        connection_id="last_connection_id",
+    )
+
+    last_published_message_data = fake_publisher.topics_called[
+        topic
+    ].last_published_message_data
+    last_published_message_attributes = fake_publisher.topics_called[
+        topic
+    ].last_published_message_attributes
+
+    assert last_published_message_data == '{"last": "message"}'
+    assert last_published_message_attributes["connection_id"] == "last_connection_id"
+    assert last_published_message_attributes["some_attribute"] == "stuff"
