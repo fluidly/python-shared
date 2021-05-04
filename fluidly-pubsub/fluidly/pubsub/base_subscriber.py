@@ -2,6 +2,7 @@ import os
 from typing import Any, Callable, List, Tuple
 
 from google.cloud.pubsub_v1 import SubscriberClient
+from google.cloud.pubsub_v1.subscriber.futures import StreamingPullFuture
 
 from fluidly.pubsub.exceptions import DropMessageException
 from fluidly.pubsub.message import Message
@@ -17,13 +18,15 @@ Subscriptions = List[Tuple[str, MessageHandler]]
 
 def setup_base_subscriber(
     subscriber: SubscriberClient, subscriptions: Subscriptions, **kwargs: Any
-) -> None:
-    for subscription_name, message_handler in subscriptions:
+) -> List[StreamingPullFuture]:
+    return [
         subscriber.subscribe(
             subscriber.subscription_path(GOOGLE_PROJECT, subscription_name),
             callback=generate_callback(Message, message_handler),
             **kwargs
         )
+        for subscription_name, message_handler in subscriptions
+    ]
 
 
 def generate_callback(
