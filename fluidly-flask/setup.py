@@ -25,7 +25,7 @@ def local_dependencies(*packages):
 
 
 REQUIRED = [
-    "flask",
+    "flask<2",
     "marshmallow",
     "uwsgi",
 ] + local_dependencies("fluidly-structlog", "fluidly-auth")
