@@ -66,3 +66,13 @@ def flask_app(request):
     yield app.test_client()
 
     ctx.pop()
+
+
+@pytest.fixture(scope="session")
+def request_context():
+    ctx = app.test_request_context()
+    ctx.push()
+
+    yield
+
+    ctx.pop()

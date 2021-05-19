@@ -15,7 +15,7 @@ def logger_mock(monkeypatch):
 
 
 @pytest.fixture()
-def request_mock(monkeypatch):
+def request_mock(monkeypatch, request_context):
     mock_request = mock.create_autospec(request)
     mock_request.view_args = {}
     mock_request.full_path = "/foo"
