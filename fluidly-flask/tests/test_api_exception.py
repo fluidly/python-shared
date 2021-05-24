@@ -24,5 +24,5 @@ def test_handle_api_exception():
     response = handle_api_exception(error)
 
     assert response.response
-    assert response.status == "500"
+    assert response.status == "500 INTERNAL SERVER ERROR"
     assert response.mimetype == "application/problem+json"
