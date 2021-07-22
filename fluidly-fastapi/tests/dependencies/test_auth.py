@@ -206,12 +206,12 @@ class TestAdmin(TestAuthBase):
             "/shared/admin",
             headers={
                 "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
-                    email="bob@burgers.com", app_metadata={"userId": 2}
+                    email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
         )
         assert response.status_code == 200
-        assert response.json() == {"user_id": 2, "email": "bob@burgers.com"}
+        assert response.json() == {"user_id": 2, "email": "bob@burgers.com", "name": "Bob"}
 
     def test_no_email_is_non_blocking(self, mocked_admin_given_permissions):
         response = self.client.get(
@@ -224,6 +224,18 @@ class TestAdmin(TestAuthBase):
         )
         assert response.status_code == 200
         assert response.json()["email"] == None
+
+    def test_no_name_is_non_blocking(self, mocked_admin_given_permissions):
+        response = self.client.get(
+            "/shared/admin",
+            headers={
+                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                    app_metadata={"userId": 2}
+                )
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["name"] == None
 
     def test_admin_service_account_granted(self, mocked_permissions_throws_exception):
         response = self.client.get(
