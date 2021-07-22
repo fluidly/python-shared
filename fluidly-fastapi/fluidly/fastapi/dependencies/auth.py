@@ -48,7 +48,12 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
             status_code=403, detail="An issue occurred while fetching permissions"
         )
 
-    return {"connection_id": connection_id, "user_id": user_id, "email": email, "name": name}
+    return {
+        "connection_id": connection_id,
+        "user_id": user_id,
+        "email": email,
+        "name": name,
+    }
 
 
 def get_admin_user(request: Request) -> Dict[str, Any]:

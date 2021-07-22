@@ -211,7 +211,11 @@ class TestAdmin(TestAuthBase):
             },
         )
         assert response.status_code == 200
-        assert response.json() == {"user_id": 2, "email": "bob@burgers.com", "name": "Bob"}
+        assert response.json() == {
+            "user_id": 2,
+            "email": "bob@burgers.com",
+            "name": "Bob",
+        }
 
     def test_no_email_is_non_blocking(self, mocked_admin_given_permissions):
         response = self.client.get(
