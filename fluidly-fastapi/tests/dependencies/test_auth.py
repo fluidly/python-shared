@@ -60,6 +60,7 @@ class TestAuthBase:
     @staticmethod
     def _get_dummy_user_info(**kwargs):
         email = kwargs.get("email", None)
+        name = kwargs.get("name", None)
         app_metadata = kwargs.get("app_metadata", {})
         internal_metadata = kwargs.get("internal_metadata", {})
 
@@ -68,6 +69,7 @@ class TestAuthBase:
                 "claims": json.dumps(
                     {
                         "https://api.fluidly.com/email": email,
+                        "https://api.fluidly.com/name": name,
                         "https://api.fluidly.com/app_metadata": {**app_metadata},
                         "https://api.fluidly.com/internal_metadata": {
                             **internal_metadata
@@ -123,7 +125,7 @@ class TestAuthorised(TestAuthBase):
             "/shared/authorised/some:connection_id",
             headers={
                 "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
-                    email="bob@burgers.com", app_metadata={"userId": 2}
+                    email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
         )
@@ -132,6 +134,7 @@ class TestAuthorised(TestAuthBase):
             "connection_id": "some:connection_id",
             "user_id": 2,
             "email": "bob@burgers.com",
+            "name": "Bob",
         }
 
     def test_no_email_is_non_blocking(self, mocked_given_permissions):
@@ -145,6 +148,18 @@ class TestAuthorised(TestAuthBase):
         )
         assert response.status_code == 200
         assert response.json()["email"] == None
+
+    def test_no_name_is_non_blocking(self, mocked_given_permissions):
+        response = self.client.get(
+            "/shared/authorised/some:connection_id",
+            headers={
+                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                    app_metadata={"userId": 2}
+                )
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["name"] == None
 
     def test_service_account_granted(self, mocked_user_permissions_throws_error):
         response = self.client.get(
@@ -191,12 +206,16 @@ class TestAdmin(TestAuthBase):
             "/shared/admin",
             headers={
                 "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
-                    email="bob@burgers.com", app_metadata={"userId": 2}
+                    email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
         )
         assert response.status_code == 200
-        assert response.json() == {"user_id": 2, "email": "bob@burgers.com"}
+        assert response.json() == {
+            "user_id": 2,
+            "email": "bob@burgers.com",
+            "name": "Bob",
+        }
 
     def test_no_email_is_non_blocking(self, mocked_admin_given_permissions):
         response = self.client.get(
@@ -209,6 +228,18 @@ class TestAdmin(TestAuthBase):
         )
         assert response.status_code == 200
         assert response.json()["email"] == None
+
+    def test_no_name_is_non_blocking(self, mocked_admin_given_permissions):
+        response = self.client.get(
+            "/shared/admin",
+            headers={
+                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                    app_metadata={"userId": 2}
+                )
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["name"] == None
 
     def test_admin_service_account_granted(self, mocked_permissions_throws_exception):
         response = self.client.get(

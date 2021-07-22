@@ -63,7 +63,7 @@ def format_check(session):
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def type_check(session):
-    session.install("mypy")
+    session.install("mypy", "types-requests", "types-setuptools")
 
     install_local_packages_as_editable(session, PACKAGES)
 
