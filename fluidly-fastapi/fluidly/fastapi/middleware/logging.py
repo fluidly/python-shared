@@ -9,7 +9,7 @@ from fluidly.structlog.base_logger import get_logger
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
-    JSON_PROBLEM_CONTENT_TYPE = "application/json+problem"
+    JSON_PROBLEM_CONTENT_TYPE = "application/problem+json"
 
     @staticmethod
     def _override_content_type(response: Response) -> None:

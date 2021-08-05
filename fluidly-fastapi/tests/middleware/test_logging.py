@@ -112,7 +112,7 @@ class TestLoggingMiddleware:
         json_response = client.get("/test")
 
         assert json_response.json() == {"detail": "Test not found"}
-        assert json_response.headers["content-type"] == "application/json+problem"
+        assert json_response.headers["content-type"] == "application/problem+json"
 
     def test_binds_request_data_on_explicit_http_exception(
         self, setup_fastapi, mock_structlog
@@ -174,7 +174,7 @@ class TestLoggingMiddleware:
         json_response = client.get("/test")
 
         assert json_response.json() == {"detail": "An unknown error occurred"}
-        assert json_response.headers["content-type"] == "application/json+problem"
+        assert json_response.headers["content-type"] == "application/problem+json"
 
     def test_binds_request_data_on_unexpected_exception(
         self, setup_fastapi, mock_structlog
