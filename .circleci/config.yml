@@ -26,11 +26,15 @@ jobs:
 
   publish:
     resource_class: small
-    working_directory: ~/app/src/fluidly-structlog
+    working_directory: ~/app/src
     docker:
       - image: circleci/python:3.7
     steps:
       - checkout
+      - run:
+          command: pipenv install --dev
+      - run:
+          command: cd fluidly-structly
       - run:
           command: pipenv run python setup.py sdist bdist_wheel
       - run:
