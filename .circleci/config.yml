@@ -41,7 +41,13 @@ workflows:
     jobs:
       - test:
           context: PUBLISHING
+          filters:
+            branches:
+              ignore: master
   "Publish to PyPi":
     jobs:
       - publish:
           context: PYPI_PUBLISHING
+          filters:
+            branches:
+              only: master
