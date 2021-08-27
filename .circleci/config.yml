@@ -34,7 +34,7 @@ jobs:
       - run:
           command: pipenv install --dev
       - run:
-          command: cd fluidly-structly
+          command: cd fluidly-structlog
       - run:
           command: pipenv run python setup.py sdist bdist_wheel
       - run:
