@@ -18,11 +18,7 @@ def local_dependencies(*packages):
     if os.environ.get("INSTALL_EDITABLE"):
         return []
 
-    return [
-        f"{package} @ git+ssh://git@github.com/fluidly/python-shared.git#subdirectory={package}"
-        for package in packages
-    ]
-
+    return list(packages)
 
 REQUIRED = [
     "fastapi",
