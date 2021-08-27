@@ -2,6 +2,16 @@
 version: 2.1
 
 jobs:
+  check_version_numbers:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: ./scripts/check_versions_bumped.sh
+
   test:
     resource_class: small
     working_directory: ~/app/src
@@ -24,8 +34,37 @@ jobs:
           name: Run pytest
           command: nox -s test
 
+  publish:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pipenv install --dev
+      - run:
+          command: ./scripts/publish_to_pypi.sh
+
 workflows:
+  "Check version numbers":
+    jobs:
+      - check_version_numbers:
+          filters:
+            branches:
+              ignore: master
+
   "Test":
     jobs:
       - test:
           context: PUBLISHING
+          filters:
+            branches:
+              ignore: master
+  "Publish to PyPi":
+    jobs:
+      - publish:
+          context: PYPI_PUBLISHING
+          filters:
+            branches:
+              only: master
