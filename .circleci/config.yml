@@ -32,6 +32,8 @@ jobs:
     steps:
       - checkout
       - run:
+          command: ls
+      - run:
           command: pipenv install --dev
       - run:
           command: cd fluidly-structlog
