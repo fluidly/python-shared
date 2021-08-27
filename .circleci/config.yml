@@ -24,8 +24,24 @@ jobs:
           name: Run pytest
           command: nox -s test
 
+  publish:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pipenv run python setup.py sdist bdist_wheel
+      - run:
+          command: twine upload dist/*
+
 workflows:
   "Test":
     jobs:
       - test:
           context: PUBLISHING
+  "Publish to PyPi":
+    jobs:
+      - publish:
+          context: PYPI_PUBLISHING
