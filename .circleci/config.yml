@@ -48,6 +48,3 @@ workflows:
     jobs:
       - publish:
           context: PYPI_PUBLISHING
-          filters:
-            branches:
-              only: master
