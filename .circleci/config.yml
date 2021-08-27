@@ -32,11 +32,11 @@ jobs:
     steps:
       - checkout
       - run:
-          command: ls
-      - run:
           command: pipenv install --dev
       - run:
           command: cd fluidly-structlog
+      - run:
+          command: ls
       - run:
           command: pipenv run python setup.py sdist bdist_wheel
       - run:
