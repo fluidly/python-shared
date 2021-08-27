@@ -34,13 +34,7 @@ jobs:
       - run:
           command: pipenv install --dev
       - run:
-          command: cd fluidly-structlog
-      - run:
-          command: ls
-      - run:
-          command: pipenv run python setup.py sdist bdist_wheel
-      - run:
-          command: pipenv run twine upload dist/*
+          command: ./scripts/publish_to_pypi.sh
 
 workflows:
   "Test":
