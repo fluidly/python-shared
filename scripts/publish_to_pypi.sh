@@ -2,4 +2,4 @@
 
 cd fluidly-structlog
 pipenv run python setup.py sdist bdist_wheel
-pipenv run twine upload dist/*
+pipenv run twine upload --skip-existing dist/*
