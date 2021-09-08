@@ -1,22 +1,79 @@
 from unittest import mock
 
+import pytest
+
 from fluidly.pubsub.fake_publisher import FakePublisher
 
 
 def test_fake_publisher_passes_on_messages():
+    m = mock.Mock()
+
+    def mock_consumer(session, message):
+        assert message.data == {}
+        assert session == fake_session
+        m.called = True
+
     fake_session = "fake session"
     topic = "notes topic"
-    consumer = mock.Mock()
-    subscriptions = [(topic, consumer)]
+    subscriptions = [(topic, mock_consumer)]
 
     fake_publisher = FakePublisher(fake_session, subscriptions)
 
     fake_publisher.publish(topic, "{}")
+    assert m.called
 
-    args, kwargs = consumer.call_args
-    session, message = args
-    assert session == fake_session
-    assert message.data == {}
+
+def test_fake_publisher_passes_on_messages_in_different_call_args():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        assert session == fake_session
+        m.called = True
+
+    fake_session = "fake session"
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(fake_session, subscriptions)
+
+    fake_publisher.publish(topic, "{}")
+    assert m.called
+
+
+def test_fake_publisher_handles_no_session():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        m.called = True
+        assert session is None
+
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(subscriptions=subscriptions)
+
+    fake_publisher.publish(topic, "{}")
+    assert m.called
+
+
+def test_fake_publisher_rejects_non_string_attributes():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        m.called = True
+        assert session is None
+
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(subscriptions=subscriptions)
+
+    with pytest.raises(ValueError):
+        fake_publisher.publish(topic, "{}", meera=False)
+    assert not m.called
 
 
 def test_fake_publisher_records_calls():
@@ -103,3 +160,29 @@ def test_fake_publisher_has_last_call_attribute():
     assert last_published_message_data == '{"last": "message"}'
     assert last_published_message_attributes["connection_id"] == "last_connection_id"
     assert last_published_message_attributes["some_attribute"] == "stuff"
+
+
+def test_fake_publisher_has_last_call_json():
+    fake_session = "fake session"
+    topic = "notes topic"
+
+    consumer = mock.Mock()
+    subscriptions = [(topic, consumer)]
+
+    fake_publisher = FakePublisher(fake_session, subscriptions)
+
+    fake_publisher.publish(
+        topic, '{"first": "message"}', connection_id="first_connection_id"
+    )
+    fake_publisher.publish(
+        topic,
+        '{"last": "message"}',
+        some_attribute="stuff",
+        connection_id="last_connection_id",
+    )
+
+    last_published_message_json = fake_publisher.topics_called[
+        topic
+    ].last_published_message_json
+
+    assert last_published_message_json == {"last": "message"}

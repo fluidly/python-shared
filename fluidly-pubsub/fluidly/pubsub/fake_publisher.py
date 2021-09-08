@@ -18,6 +18,10 @@ class TopicSpy:
         self.calls: List[List[Any]] = []
 
     @property
+    def last_published_message_json(self) -> Any:
+        return json.loads(self.last_published_message_data)
+
+    @property
     def last_published_message_data(self) -> Any:
         return self.calls[-1][0]
 
@@ -28,7 +32,9 @@ class TopicSpy:
 
 class FakePublisher:
     def __init__(
-        self, session: Any, subscriptions: List[Tuple[str, Callable[..., Message]]] = []
+        self,
+        session: Any = None,
+        subscriptions: List[Tuple[str, Callable[..., Message]]] = [],
     ) -> None:
         self.session = session
         self.subscriptions = dict(subscriptions)
@@ -38,8 +44,14 @@ class FakePublisher:
         self, topic: str, data: str, connection_id: str = "", **attrs: Any
     ) -> MessageFuture:
 
+        for attr in attrs.values():
+            if not isinstance(attr, str):
+                raise ValueError("Non-string attribute detected")
+
         if topic in self.subscriptions:
-            self.subscriptions[topic](self.session, message_from_dict(json.loads(data)))
+            self.subscriptions[topic](
+                session=self.session, message=message_from_dict(json.loads(data))
+            )
         self.topics_called[topic].call_count += 1
         self.topics_called[topic].call_list.append(data)
         self.topics_called[topic].calls.append(
