@@ -18,6 +18,10 @@ class TopicSpy:
         self.calls: List[List[Any]] = []
 
     @property
+    def last_published_message_json(self) -> Any:
+        return json.loads(self.last_published_message_data)
+
+    @property
     def last_published_message_data(self) -> Any:
         return self.calls[-1][0]
 

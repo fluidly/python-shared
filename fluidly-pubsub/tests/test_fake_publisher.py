@@ -160,3 +160,29 @@ def test_fake_publisher_has_last_call_attribute():
     assert last_published_message_data == '{"last": "message"}'
     assert last_published_message_attributes["connection_id"] == "last_connection_id"
     assert last_published_message_attributes["some_attribute"] == "stuff"
+
+
+def test_fake_publisher_has_last_call_json():
+    fake_session = "fake session"
+    topic = "notes topic"
+
+    consumer = mock.Mock()
+    subscriptions = [(topic, consumer)]
+
+    fake_publisher = FakePublisher(fake_session, subscriptions)
+
+    fake_publisher.publish(
+        topic, '{"first": "message"}', connection_id="first_connection_id"
+    )
+    fake_publisher.publish(
+        topic,
+        '{"last": "message"}',
+        some_attribute="stuff",
+        connection_id="last_connection_id",
+    )
+
+    last_published_message_json = fake_publisher.topics_called[
+        topic
+    ].last_published_message_json
+
+    assert last_published_message_json == {"last": "message"}
