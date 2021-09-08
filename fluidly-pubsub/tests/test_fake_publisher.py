@@ -39,6 +39,22 @@ def test_fake_publisher_passes_on_messages_in_different_call_args():
     assert m.called
 
 
+def test_fake_publisher_handles_no_session():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        m.called = True
+        assert session is None
+
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(subscriptions=subscriptions)
+
+    fake_publisher.publish(topic, "{}")
+    assert m.called
+
 def test_fake_publisher_records_calls():
     fake_session = "fake session"
     topic = "notes topic"
