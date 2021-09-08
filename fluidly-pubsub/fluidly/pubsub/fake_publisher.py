@@ -28,7 +28,9 @@ class TopicSpy:
 
 class FakePublisher:
     def __init__(
-        self, session: Any = None, subscriptions: List[Tuple[str, Callable[..., Message]]] = []
+        self,
+        session: Any = None,
+        subscriptions: List[Tuple[str, Callable[..., Message]]] = [],
     ) -> None:
         self.session = session
         self.subscriptions = dict(subscriptions)
