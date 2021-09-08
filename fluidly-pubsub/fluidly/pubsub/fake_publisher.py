@@ -38,6 +38,10 @@ class FakePublisher:
         self, topic: str, data: str, connection_id: str = "", **attrs: Any
     ) -> MessageFuture:
 
+        for attr in attrs.values():
+            if not isinstance(attr, str):
+                raise ValueError("Non-string attribute detected")
+
         if topic in self.subscriptions:
             self.subscriptions[topic](
                 session=self.session, message=message_from_dict(json.loads(data))

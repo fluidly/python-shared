@@ -1,5 +1,7 @@
 from unittest import mock
 
+import pytest
+
 from fluidly.pubsub.fake_publisher import FakePublisher
 
 
@@ -54,6 +56,25 @@ def test_fake_publisher_handles_no_session():
 
     fake_publisher.publish(topic, "{}")
     assert m.called
+
+
+def test_fake_publisher_rejects_non_string_attributes():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        m.called = True
+        assert session is None
+
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(subscriptions=subscriptions)
+
+    with pytest.raises(ValueError):
+        fake_publisher.publish(topic, "{}", meera=False)
+    assert not m.called
+
 
 def test_fake_publisher_records_calls():
     fake_session = "fake session"
