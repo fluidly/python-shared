@@ -4,19 +4,39 @@ from fluidly.pubsub.fake_publisher import FakePublisher
 
 
 def test_fake_publisher_passes_on_messages():
+    m = mock.Mock()
+
+    def mock_consumer(session, message):
+        assert message.data == {}
+        assert session == fake_session
+        m.called = True
+
     fake_session = "fake session"
     topic = "notes topic"
-    consumer = mock.Mock()
-    subscriptions = [(topic, consumer)]
+    subscriptions = [(topic, mock_consumer)]
 
     fake_publisher = FakePublisher(fake_session, subscriptions)
 
     fake_publisher.publish(topic, "{}")
+    assert m.called
 
-    args, kwargs = consumer.call_args
-    session, message = args
-    assert session == fake_session
-    assert message.data == {}
+
+def test_fake_publisher_passes_on_messages_in_different_call_args():
+    m = mock.Mock()
+
+    def mock_consumer(message, session):
+        assert message.data == {}
+        assert session == fake_session
+        m.called = True
+
+    fake_session = "fake session"
+    topic = "notes topic"
+    subscriptions = [(topic, mock_consumer)]
+
+    fake_publisher = FakePublisher(fake_session, subscriptions)
+
+    fake_publisher.publish(topic, "{}")
+    assert m.called
 
 
 def test_fake_publisher_records_calls():

@@ -39,7 +39,9 @@ class FakePublisher:
     ) -> MessageFuture:
 
         if topic in self.subscriptions:
-            self.subscriptions[topic](self.session, message_from_dict(json.loads(data)))
+            self.subscriptions[topic](
+                session=self.session, message=message_from_dict(json.loads(data))
+            )
         self.topics_called[topic].call_count += 1
         self.topics_called[topic].call_list.append(data)
         self.topics_called[topic].calls.append(
