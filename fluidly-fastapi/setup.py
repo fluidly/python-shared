@@ -22,7 +22,7 @@ def local_dependencies(*packages):
 
 
 REQUIRED = [
-    "fastapi",
+    "fastapi==0.68.2",
 ] + local_dependencies("fluidly-structlog", "fluidly-auth")
 
 
