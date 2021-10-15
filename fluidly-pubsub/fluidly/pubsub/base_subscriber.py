@@ -14,11 +14,12 @@ APPLICATION_NAME = os.getenv("APPLICATION_NAME")
 Deserialiser = Callable[[Message], Any]
 MessageHandler = Callable[[Message], Any]
 Subscriptions = List[Tuple[str, MessageHandler]]
+SubscriptionFutures = List[StreamingPullFuture]
 
 
 def setup_base_subscriber(
     subscriber: SubscriberClient, subscriptions: Subscriptions, **kwargs: Any
-) -> List[StreamingPullFuture]:
+) -> SubscriptionFutures:
     return [
         subscriber.subscribe(
             subscriber.subscription_path(GOOGLE_PROJECT, subscription_name),

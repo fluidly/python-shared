@@ -11,7 +11,7 @@ URL = "https://github.com/fluidly/python-shared"
 EMAIL = "tech@fluidly.com"
 AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 
 def local_dependencies(*packages):
@@ -22,7 +22,7 @@ def local_dependencies(*packages):
 
 
 REQUIRED = [
-    "fastapi",
+    "fastapi==0.68.2",
 ] + local_dependencies("fluidly-structlog", "fluidly-auth")
 
 
