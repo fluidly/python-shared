@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from typing import Any, Dict, Optional
 
 import structlog
@@ -22,7 +23,7 @@ def filter_by_level(
         "WARN": logging.WARN,
         "WARNING": logging.WARNING,
         "ERROR": logging.ERROR,
-        "CRITCAL": logging.CRITICAL,
+        "CRITICAL": logging.CRITICAL,
     }  # type: Dict[str, int]
     try:
         if level[method_name.upper()] < level[min_level]:
@@ -44,11 +45,20 @@ def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -
     return event_dict
 
 
+def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict:
+    """Add serviceContext.service if the env variable SERVICE_NAME is set for error reporting in gcp"""
+    service_name = os.getenv("SERVICE_NAME")
+    if service_name:
+        event_dict["serviceContext"] = {"service": service_name}
+    return event_dict
+
+
 structlog.configure(
     processors=[
         filter_by_level,
         structlog.processors.format_exc_info,
         add_log_level_as_severity,
+        add_service_context,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.dev.ConsoleRenderer()
         if "PRETTY_LOGS" in os.environ
@@ -58,3 +68,16 @@ structlog.configure(
 )
 
 get_logger = structlog.get_logger
+
+
+def unhandeld_exception_hook(exception_type, exception, traceback):
+    logger = get_logger()
+    logger.exception(
+        "Unhandeld Exception", exc_info=(exception_type, exception, traceback)
+    )
+
+
+def setup_logging():
+    """Add a sys.excepthook so that the log processors are applied and there is nice
+    error log in gcp"""
+    sys.excepthook = unhandeld_exception_hook

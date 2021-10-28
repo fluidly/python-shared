@@ -1,7 +1,11 @@
 import pytest
 import structlog
 
-from fluidly.structlog.base_logger import filter_by_level, get_logger
+from fluidly.structlog.base_logger import (
+    add_service_context,
+    filter_by_level,
+    get_logger,
+)
 
 
 def test_get_logger():
@@ -26,3 +30,16 @@ def test_filter_by_level():
 
 def test_filter_by_level_with_unknown_method():
     assert filter_by_level(object(), "foo", {"key": "value"})  # not dropped
+
+
+def test_add_service_context_when_env_set(monkeypatch):
+    monkeypatch.setenv("SERVICE_NAME", "fluidly-service")
+    event = add_service_context(None, "some_method", {})
+
+    assert event["serviceContext"]["service"] == "fluidly-service"
+
+
+def test_add_service_context_does_nothing_when_not_env():
+    event = add_service_context(None, "some_method", {})
+
+    assert event == {}
