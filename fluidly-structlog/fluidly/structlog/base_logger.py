@@ -46,8 +46,8 @@ def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -
 
 
 def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict:
-    """Add serviceContext.service if the env variable SERVICE_NAME is set for error reporting in gcp"""
-    service_name = os.getenv("SERVICE_NAME")
+    """Add serviceContext.service if the env variable APPLICATION_NAME is set for error reporting in gcp"""
+    service_name = os.getenv("APPLICATION_NAME")
     if service_name:
         event_dict["serviceContext"] = {"service": service_name}
     return event_dict

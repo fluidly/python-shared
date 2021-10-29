@@ -33,7 +33,7 @@ def test_filter_by_level_with_unknown_method():
 
 
 def test_add_service_context_when_env_set(monkeypatch):
-    monkeypatch.setenv("SERVICE_NAME", "fluidly-service")
+    monkeypatch.setenv("APPLICATION_NAME", "fluidly-service")
     event = add_service_context(None, "some_method", {})
 
     assert event["serviceContext"]["service"] == "fluidly-service"
