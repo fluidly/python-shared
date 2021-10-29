@@ -70,14 +70,14 @@ structlog.configure(
 get_logger = structlog.get_logger
 
 
-def unhandeld_exception_hook(exception_type, exception, traceback):
+def unhandled_exception_hook(exception_type, exception, traceback):
     logger = get_logger()
     logger.exception(
-        "Unhandeld Exception", exc_info=(exception_type, exception, traceback)
+        "Unhandled Exception", exc_info=(exception_type, exception, traceback)
     )
 
 
 def setup_logging():
     """Add a sys.excepthook so that the log processors are applied and there is nice
     error log in gcp"""
-    sys.excepthook = unhandeld_exception_hook
+    sys.excepthook = unhandled_exception_hook
