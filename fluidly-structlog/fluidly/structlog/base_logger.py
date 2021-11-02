@@ -6,10 +6,16 @@ from typing import Any, Dict, Optional
 import structlog
 from structlog.threadlocal import wrap_dict
 
+Logger = Any
+EventDict = Dict[str, Any]
+
 
 def filter_by_level(
-    logger: Any, method_name: str, event_dict: Dict, min_level: Optional[str] = None
-) -> Dict:
+    logger: Logger,
+    method_name: str,
+    event_dict: EventDict,
+    min_level: Optional[str] = None,
+) -> EventDict:
     """Filter out log messages lower than specified level.
 
     Default minimum level is LOG_LEVEL environment variable or if unset INFO.
@@ -33,7 +39,9 @@ def filter_by_level(
     return event_dict
 
 
-def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -> Dict:
+def add_log_level_as_severity(
+    logger: Logger, method_name: str, event_dict: EventDict
+) -> EventDict:
     """
     Add the log level to the event dict.
     """
@@ -45,7 +53,9 @@ def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -
     return event_dict
 
 
-def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict:
+def add_service_context(
+    logger: Logger, method_name: str, event_dict: EventDict
+) -> EventDict:
     """Add serviceContext.service if the env variable APPLICATION_NAME is set for error reporting in gcp"""
     service_name = os.getenv("APPLICATION_NAME")
     if service_name:
@@ -53,7 +63,9 @@ def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict
     return event_dict
 
 
-def unhandled_exception_hook(exception_type, exception, traceback):
+def unhandled_exception_hook(
+    exception_type: Any, exception: Any, traceback: Any
+) -> None:
     """Hook to make sure the log processors are applied to unhandled exceptions as well"""
     logger = get_logger()
     logger.exception(
@@ -61,16 +73,16 @@ def unhandled_exception_hook(exception_type, exception, traceback):
     )
 
 
-def get_logger():
+def get_logger() -> Logger:
     if not structlog.is_configured():
         structlog.configure(
             processors=[
-                filter_by_level,
+                filter_by_level,  # type: ignore
                 structlog.processors.format_exc_info,
-                add_log_level_as_severity,
-                add_service_context,
+                add_log_level_as_severity,  # type: ignore
+                add_service_context,  # type: ignore
                 structlog.processors.TimeStamper(fmt="iso"),
-                structlog.dev.ConsoleRenderer()
+                structlog.dev.ConsoleRenderer()  # type: ignore
                 if "PRETTY_LOGS" in os.environ
                 else structlog.processors.JSONRenderer(),
             ],
