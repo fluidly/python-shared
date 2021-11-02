@@ -7,8 +7,11 @@ import structlog
 from structlog.threadlocal import wrap_dict
 
 
+Logger = Any
+
+
 def filter_by_level(
-    logger: Any, method_name: str, event_dict: Dict, min_level: Optional[str] = None
+    logger: Logger, method_name: str, event_dict: Dict, min_level: Optional[str] = None
 ) -> Dict:
     """Filter out log messages lower than specified level.
 
@@ -33,7 +36,7 @@ def filter_by_level(
     return event_dict
 
 
-def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -> Dict:
+def add_log_level_as_severity(logger: Logger, method_name: str, event_dict: Dict) -> Dict:
     """
     Add the log level to the event dict.
     """
@@ -45,7 +48,7 @@ def add_log_level_as_severity(logger: Any, method_name: str, event_dict: Dict) -
     return event_dict
 
 
-def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict:
+def add_service_context(logger: Logger, method_name: str, event_dict: Dict) -> Dict:
     """Add serviceContext.service if the env variable APPLICATION_NAME is set for error reporting in gcp"""
     service_name = os.getenv("APPLICATION_NAME")
     if service_name:
@@ -53,7 +56,7 @@ def add_service_context(logger: Any, method_name: str, event_dict: Dict) -> Dict
     return event_dict
 
 
-def unhandled_exception_hook(exception_type, exception, traceback):
+def unhandled_exception_hook(exception_type, exception, traceback) -> None:
     """Hook to make sure the log processors are applied to unhandled exceptions as well"""
     logger = get_logger()
     logger.exception(
@@ -61,7 +64,7 @@ def unhandled_exception_hook(exception_type, exception, traceback):
     )
 
 
-def get_logger():
+def get_logger() -> Logger:
     if not structlog.is_configured():
         structlog.configure(
             processors=[
