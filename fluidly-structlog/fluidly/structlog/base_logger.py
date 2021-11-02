@@ -6,7 +6,6 @@ from typing import Any, Dict, Optional
 import structlog
 from structlog.threadlocal import wrap_dict
 
-
 Logger = Any
 
 
@@ -36,7 +35,9 @@ def filter_by_level(
     return event_dict
 
 
-def add_log_level_as_severity(logger: Logger, method_name: str, event_dict: Dict) -> Dict:
+def add_log_level_as_severity(
+    logger: Logger, method_name: str, event_dict: Dict
+) -> Dict:
     """
     Add the log level to the event dict.
     """
