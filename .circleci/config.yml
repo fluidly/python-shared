@@ -25,6 +25,19 @@ jobs:
           name: Run format-check
           command: nox -s format_check
 
+  lint:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run lint
+          command: nox -s lint
+
   test:
     resource_class: small
     working_directory: ~/app/src
@@ -67,6 +80,10 @@ workflows:
   "Test":
     jobs:
       - format_check:
+          filters:
+            branches:
+              ignore: master
+      - lint:
           filters:
             branches:
               ignore: master
