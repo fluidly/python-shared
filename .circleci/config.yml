@@ -38,7 +38,7 @@ jobs:
           name: Run lint
           command: nox -s lint
 
-  test:
+  type_check:
     resource_class: small
     working_directory: ~/app/src
     docker:
@@ -48,11 +48,18 @@ jobs:
       - run:
           command: pip install nox
       - run:
-          name: Run lint
-          command: nox -s lint
-      - run:
           name: Run type-check
           command: nox -s type_check
+
+  test:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
       - run:
           name: Run pytest
           command: nox -s test
