@@ -38,7 +38,7 @@ jobs:
           name: Run lint
           command: nox -s lint
 
-  type_check:
+  type_check_python_3_7:
     resource_class: small
     working_directory: ~/app/src
     docker:
@@ -49,7 +49,46 @@ jobs:
           command: pip install nox
       - run:
           name: Run type-check
-          command: nox -s type_check
+          command: nox -s type_check-3.7
+
+  type_check_python_3_8:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run type-check
+          command: nox -s type_check-3.8
+
+  type_check_python_3_9:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run type-check
+          command: nox -s type_check-3.9
+
+  type_check_python_3_10:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run type-check
+          command: nox -s type_check-3.10
 
   test_python_3_7:
     resource_class: small
@@ -130,6 +169,22 @@ workflows:
             branches:
               ignore: master
       - lint:
+          filters:
+            branches:
+              ignore: master
+      - type_check_python_3_7:
+          filters:
+            branches:
+              ignore: master
+      - type_check_python_3_8:
+          filters:
+            branches:
+              ignore: master
+      - type_check_python_3_9:
+          filters:
+            branches:
+              ignore: master
+      - type_check_python_3_10:
           filters:
             branches:
               ignore: master
