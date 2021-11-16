@@ -117,9 +117,9 @@ workflows:
             branches:
               ignore: master
 
-  "Test":
+  "Check types":
     jobs:
-      - test:
+      - type_check:
           matrix:
             parameters:
               version:
@@ -130,7 +130,10 @@ workflows:
           filters:
             branches:
               ignore: master
-      - type_check:
+
+  "Test":
+    jobs:
+      - test:
           matrix:
             parameters:
               version:
