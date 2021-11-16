@@ -1,22 +1,31 @@
 ---
 version: 2.1
 
+executors:
+  python-docker:
+    parameters:
+      version:
+        description: "python version"
+        type: string
+    docker:
+      - image: cimg/python:<<parameters.version>>
+
 jobs:
   check_version_numbers:
     resource_class: small
     working_directory: ~/app/src
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - run:
           command: ./scripts/check_versions_bumped.sh
 
-  test:
+  format_check:
     resource_class: small
     working_directory: ~/app/src
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - run:
@@ -24,15 +33,55 @@ jobs:
       - run:
           name: Run format-check
           command: nox -s format_check
+
+  lint:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
       - run:
           name: Run lint
           command: nox -s lint
+
+  type_check:
+    parameters:
+      version:
+        description: "python version"
+        type: string
+    resource_class: small
+    working_directory: ~/app/src
+    executor:
+      name: python-docker
+      version: <<parameters.version>>
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
       - run:
           name: Run type-check
-          command: nox -s type_check
+          command: nox -s type_check-<<parameters.version>>
+
+  test:
+    parameters:
+      version:
+        description: "python version"
+        type: string
+    resource_class: small
+    working_directory: ~/app/src
+    executor:
+      name: python-docker
+      version: <<parameters.version>>
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
       - run:
           name: Run pytest
-          command: nox -s test
+          command: nox -s test-<<parameters.version>>
 
   publish:
     resource_class: small
@@ -54,13 +103,48 @@ workflows:
             branches:
               ignore: master
 
-  "Test":
+  "Check formatting":
     jobs:
-      - test:
-          context: PUBLISHING
+      - format_check:
           filters:
             branches:
               ignore: master
+
+  "Check linting":
+    jobs:
+      - lint:
+          filters:
+            branches:
+              ignore: master
+
+  "Check types":
+    jobs:
+      - type_check:
+          matrix:
+            parameters:
+              version:
+                - "3.7"
+                - "3.8"
+                - "3.9"
+                - "3.10"
+          filters:
+            branches:
+              ignore: master
+
+  "Test":
+    jobs:
+      - test:
+          matrix:
+            parameters:
+              version:
+                - "3.7"
+                - "3.8"
+                - "3.9"
+                - "3.10"
+          filters:
+            branches:
+              ignore: master
+
   "Publish to PyPi":
     jobs:
       - publish:

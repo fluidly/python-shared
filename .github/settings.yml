@@ -18,5 +18,14 @@ branches:
     protection:
       required_status_checks:
         contexts:
-          - "ci/circleci: test"
           - "ci/circleci: check_version_numbers"
+          - "ci/circleci: format_check"
+          - "ci/circleci: lint"
+          - "ci/circleci: type_check-3.7"
+          - "ci/circleci: type_check-3.8"
+          - "ci/circleci: type_check-3.9"
+          - "ci/circleci: type_check-3.10"
+          - "ci/circleci: test-3.7"
+          - "ci/circleci: test-3.8"
+          - "ci/circleci: test-3.9"
+          - "ci/circleci: test-3.10"

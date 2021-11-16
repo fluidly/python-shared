@@ -3,6 +3,7 @@ import os
 import nox
 
 DEFAULT_PYTHON_VERSION = "3.7"
+SUPPORTED_PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
 FORMAT_DEPENDENCIES = ["autoflake", "black", "isort"]
 
 PACKAGES = [f for f in os.listdir(".") if os.path.isdir(f) and f.startswith("fluidly-")]
@@ -23,7 +24,7 @@ def setup(session):
     session.run("pre-commit", "install")
 
 
-@nox.session(python=DEFAULT_PYTHON_VERSION)
+@nox.session(python=SUPPORTED_PYTHON_VERSIONS)
 def test(session):
     session.install("pytest", "responses", "freezegun")
 
@@ -61,7 +62,7 @@ def format_check(session):
     session.run("black", "--check", "--diff", ".")
 
 
-@nox.session(python=DEFAULT_PYTHON_VERSION)
+@nox.session(python=SUPPORTED_PYTHON_VERSIONS)
 def type_check(session):
     session.install("mypy", "types-requests", "types-setuptools")
 
