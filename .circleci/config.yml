@@ -51,7 +51,7 @@ jobs:
           name: Run type-check
           command: nox -s type_check
 
-  test:
+  test_python_3_7:
     resource_class: small
     working_directory: ~/app/src
     docker:
@@ -62,7 +62,46 @@ jobs:
           command: pip install nox
       - run:
           name: Run pytest
-          command: nox -s test
+          command: nox -s test-3.7
+
+  test_python_3_8:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run pytest
+          command: nox -s test-3.8
+
+  test_python_3_9:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run pytest
+          command: nox -s test-3.9
+
+  test_python_3_10:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
+      - run:
+          name: Run pytest
+          command: nox -s test-3.10
 
   publish:
     resource_class: small
@@ -94,7 +133,19 @@ workflows:
           filters:
             branches:
               ignore: master
-      - test:
+      - test_python_3_7:
+          filters:
+            branches:
+              ignore: master
+      - test_python_3_8:
+          filters:
+            branches:
+              ignore: master
+      - test_python_3_9:
+          filters:
+            branches:
+              ignore: master
+      - test_python_3_10:
           filters:
             branches:
               ignore: master
