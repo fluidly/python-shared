@@ -1,6 +1,15 @@
 ---
 version: 2.1
 
+executors:
+  python-docker:
+    parameters:
+      version:
+        description: "python version"
+        type: string
+    docker:
+      - image: cimg/python:<<parameters.version>>
+
 jobs:
   check_version_numbers:
     resource_class: small
@@ -38,109 +47,41 @@ jobs:
           name: Run lint
           command: nox -s lint
 
-  type_check_python_3_7:
+  type_check:
+    parameters:
+      version:
+        description: "python version"
+        type: string
     resource_class: small
     working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.7
+    executor:
+      name: python-docker
+      version: <<parameters.version>>
     steps:
       - checkout
       - run:
           command: pip install nox
       - run:
           name: Run type-check
-          command: nox -s type_check-3.7
+          command: nox -s type_check-<<parameters.version>>
 
-  type_check_python_3_8:
+  test:
+    parameters:
+      version:
+        description: "python version"
+        type: string
     resource_class: small
     working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run type-check
-          command: nox -s type_check-3.8
-
-  type_check_python_3_9:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.9
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run type-check
-          command: nox -s type_check-3.9
-
-  type_check_python_3_10:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.10
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run type-check
-          command: nox -s type_check-3.10
-
-  test_python_3_7:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.7
+    executor:
+      name: python-docker
+      version: <<parameters.version>>
     steps:
       - checkout
       - run:
           command: pip install nox
       - run:
           name: Run pytest
-          command: nox -s test-3.7
-
-  test_python_3_8:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run pytest
-          command: nox -s test-3.8
-
-  test_python_3_9:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.9
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run pytest
-          command: nox -s test-3.9
-
-  test_python_3_10:
-    resource_class: small
-    working_directory: ~/app/src
-    docker:
-      - image: cimg/python:3.10
-    steps:
-      - checkout
-      - run:
-          command: pip install nox
-      - run:
-          name: Run pytest
-          command: nox -s test-3.10
+          command: nox -s test-<<parameters.version>>
 
   publish:
     resource_class: small
@@ -178,35 +119,25 @@ workflows:
 
   "Test":
     jobs:
-      - type_check_python_3_7:
+      - test:
+          matrix:
+            parameters:
+              version:
+                - "3.7"
+                - "3.8"
+                - "3.9"
+                - "3.10"
           filters:
             branches:
               ignore: master
-      - type_check_python_3_8:
-          filters:
-            branches:
-              ignore: master
-      - type_check_python_3_9:
-          filters:
-            branches:
-              ignore: master
-      - type_check_python_3_10:
-          filters:
-            branches:
-              ignore: master
-      - test_python_3_7:
-          filters:
-            branches:
-              ignore: master
-      - test_python_3_8:
-          filters:
-            branches:
-              ignore: master
-      - test_python_3_9:
-          filters:
-            branches:
-              ignore: master
-      - test_python_3_10:
+      - type_check:
+          matrix:
+            parameters:
+              version:
+                - "3.7"
+                - "3.8"
+                - "3.9"
+                - "3.10"
           filters:
             branches:
               ignore: master
