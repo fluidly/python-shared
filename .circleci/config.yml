@@ -162,16 +162,22 @@ workflows:
             branches:
               ignore: master
 
-  "Test":
+  "Check formatting":
     jobs:
       - format_check:
           filters:
             branches:
               ignore: master
+
+  "Check linting":
+    jobs:
       - lint:
           filters:
             branches:
               ignore: master
+
+  "Test":
+    jobs:
       - type_check_python_3_7:
           filters:
             branches:
