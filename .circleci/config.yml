@@ -6,7 +6,7 @@ jobs:
     resource_class: small
     working_directory: ~/app/src
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.10
     steps:
       - checkout
       - run:
@@ -57,10 +57,10 @@ workflows:
   "Test":
     jobs:
       - test:
-          context: PUBLISHING
           filters:
             branches:
               ignore: master
+
   "Publish to PyPi":
     jobs:
       - publish:
