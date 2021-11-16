@@ -6,17 +6,17 @@ jobs:
     resource_class: small
     working_directory: ~/app/src
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/python:3.7
     steps:
       - checkout
       - run:
           command: ./scripts/check_versions_bumped.sh
 
-  test:
+  format_check:
     resource_class: small
     working_directory: ~/app/src
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - run:
@@ -24,6 +24,16 @@ jobs:
       - run:
           name: Run format-check
           command: nox -s format_check
+
+  test:
+    resource_class: small
+    working_directory: ~/app/src
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - run:
+          command: pip install nox
       - run:
           name: Run lint
           command: nox -s lint
@@ -56,6 +66,10 @@ workflows:
 
   "Test":
     jobs:
+      - format_check:
+          filters:
+            branches:
+              ignore: master
       - test:
           filters:
             branches:
