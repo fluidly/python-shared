@@ -11,13 +11,16 @@ from fluidly.auth.permissions import (
     check_user_permissions,
 )
 from fluidly.fastapi.utils import base64_decode
+from fluidly.structlog.base_logger import get_logger
 
 
 def get_authorised_user(request: Request) -> Dict[str, Any]:
     """Retrieves the authentication information from Google Cloud Endpoints
     and passes it to user permissions service"""
+    logger = get_logger()
     encoded_user_info = request.headers.get("X-Endpoint-API-UserInfo", None)
     if not encoded_user_info:
+        logger.error("get_admin_user", exc_info=True)
         raise HTTPException(status_code=401, detail="User is not authenticated")
 
     decoded_user_info = base64_decode(encoded_user_info)
@@ -36,6 +39,7 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
         is_service_account = internal_claims.get("isServiceAccount", False)
 
         if not is_service_account and not check_user_permissions(claims, connection_id):
+            logger.error("get_admin_user", exc_info=True)
             raise HTTPException(
                 status_code=403, detail="User cannot access this resource"
             )
@@ -44,6 +48,7 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
         UserPermissionsPayloadException,
         UserPermissionsRequestException,
     ):
+        logger.error("get_admin_user", exc_info=True)
         raise HTTPException(
             status_code=403, detail="An issue occurred while fetching permissions"
         )
@@ -58,8 +63,10 @@ def get_authorised_user(request: Request) -> Dict[str, Any]:
 
 def get_admin_user(request: Request) -> Dict[str, Any]:
     """Retrieves the authentication information from Google Cloud Endpoints and passes it to user permissions service"""
+    logger = get_logger()
     encoded_info = request.headers.get("X-Endpoint-API-UserInfo", None)
     if not encoded_info:
+        logger.error("get_admin_user", exc_info=True)
         raise HTTPException(status_code=401, detail="User is not authenticated")
 
     info_json = base64_decode(encoded_info)
@@ -80,6 +87,7 @@ def get_admin_user(request: Request) -> Dict[str, Any]:
         is_service_account = internal_claims.get("isServiceAccount", False)
 
         if not is_service_account and not check_admin_permissions(claims):
+            logger.error("get_admin_user", exc_info=True)
             raise HTTPException(
                 status_code=403, detail="User cannot access this resource"
             )
@@ -88,6 +96,7 @@ def get_admin_user(request: Request) -> Dict[str, Any]:
         UserPermissionsPayloadException,
         UserPermissionsRequestException,
     ):
+        logger.error("get_admin_user", exc_info=True)
         raise HTTPException(
             status_code=403, detail="An issue occurred while fetching permissions"
         )
