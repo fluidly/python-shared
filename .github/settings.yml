@@ -28,4 +28,3 @@ branches:
           - "ci/circleci: test-3.7"
           - "ci/circleci: test-3.8"
           - "ci/circleci: test-3.9"
-          - "ci/circleci: test-3.10"
