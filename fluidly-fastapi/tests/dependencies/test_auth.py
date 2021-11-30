@@ -96,7 +96,7 @@ class TestAuthBase:
         self.client = TestClient(fastapi_app)
 
 
-class TestAuthorised(TestAuthBase):
+class TestAuthorisedESPv1(TestAuthBase):
     def test_user_unauthenticated(self):
         response = self.client.get("/shared/authorised/some:connection_id")
         assert response.status_code == 401
@@ -105,7 +105,7 @@ class TestAuthorised(TestAuthBase):
     def test_permissions_unavailable(self):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {
@@ -115,7 +115,7 @@ class TestAuthorised(TestAuthBase):
     def test_permissions_available_not_granted(self, mocked_not_given_permissions):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {"detail": "User cannot access this resource"}
@@ -124,7 +124,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
@@ -141,7 +141,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -153,7 +153,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -165,7 +165,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
