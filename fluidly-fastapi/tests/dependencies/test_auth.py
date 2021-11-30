@@ -270,3 +270,21 @@ class TestAdminESPv1(TestAuthBase):
         )
         assert response.status_code == 200
         assert response.json()["user_id"] == None
+
+
+class TestAdminESPv2(TestAdminESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        email = kwargs.get("email", None)
+        name = kwargs.get("name", None)
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAuthBase._encode_claims(
+            {
+                "https://api.fluidly.com/email": email,
+                "https://api.fluidly.com/name": name,
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
