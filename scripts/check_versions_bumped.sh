@@ -17,7 +17,13 @@ for DIR in $CHANGED_DIRS
 do
     if [[ ! $CHANGED_FILES =~ "$DIR/setup.py" ]]
     then
-        echo "Need to bump version in $DIR"
+        echo "Need to bump version in $DIR/setup.py with scripts/bumpversions.sh script"
+        EXIT_CODE=1
+    fi
+
+    if [[ ! $CHANGED_FILES =~ "$DIR/.bumpversion.cfg" ]]
+    then
+        echo "Need to bump version in $DIR/.bumpversion.cfg with scripts/bumpversions.sh script"
         EXIT_CODE=1
     fi
 done
