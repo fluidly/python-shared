@@ -144,6 +144,20 @@ class TestAuthorisedESPv1:
         assert response.data == b"some:connection_id"
 
 
+class TestAuthorisedESPv2(TestAuthorisedESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAuthorisedESPv2._encode_claims(
+            {
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
+
+
 class TestAdminESPv1:
     @staticmethod
     def _encode_claims(claims):

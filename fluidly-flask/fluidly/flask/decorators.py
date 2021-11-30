@@ -24,7 +24,12 @@ def authorised(f):
 
         decoded_user_info = base64_decode(encoded_user_info)
         user_info = json.loads(decoded_user_info)
-        claims = json.loads(user_info.get("claims", "{}"))
+
+        if "claims" in user_info:
+            claims = json.loads(user_info.get("claims", "{}"))
+        else:
+            # Support ESPv2
+            claims = user_info
 
         auth0_claims = claims.get("https://api.fluidly.com/app_metadata", {})
         internal_claims = claims.get("https://api.fluidly.com/internal_metadata", {})
