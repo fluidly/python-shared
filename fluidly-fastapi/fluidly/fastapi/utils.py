@@ -8,6 +8,8 @@ def base64_decode(encoded_str: bytes) -> str:
 
     https://en.wikipedia.org/wiki/Base64#Output_padding
     """
+    if isinstance(encoded_str, str):
+        encoded_str = encoded_str.encode("utf-8")
 
     num_missed_paddings = 4 - len(encoded_str) % 4
     if num_missed_paddings != 4:

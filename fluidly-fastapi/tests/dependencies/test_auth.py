@@ -96,7 +96,7 @@ class TestAuthBase:
         self.client = TestClient(fastapi_app)
 
 
-class TestAuthorised(TestAuthBase):
+class TestAuthorisedESPv1(TestAuthBase):
     def test_user_unauthenticated(self):
         response = self.client.get("/shared/authorised/some:connection_id")
         assert response.status_code == 401
@@ -105,7 +105,7 @@ class TestAuthorised(TestAuthBase):
     def test_permissions_unavailable(self):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {
@@ -115,7 +115,7 @@ class TestAuthorised(TestAuthBase):
     def test_permissions_available_not_granted(self, mocked_not_given_permissions):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {"detail": "User cannot access this resource"}
@@ -124,7 +124,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
@@ -141,7 +141,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -153,7 +153,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -165,7 +165,7 @@ class TestAuthorised(TestAuthBase):
         response = self.client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
@@ -175,7 +175,25 @@ class TestAuthorised(TestAuthBase):
         assert response.json()["user_id"] == None
 
 
-class TestAdmin(TestAuthBase):
+class TestAuthorisedESPv2(TestAuthorisedESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        email = kwargs.get("email", None)
+        name = kwargs.get("name", None)
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAuthBase._encode_claims(
+            {
+                "https://api.fluidly.com/email": email,
+                "https://api.fluidly.com/name": name,
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
+
+
+class TestAdminESPv1(TestAuthBase):
     def test_admin_unauthenticated(self):
         response = self.client.get("/shared/admin")
         assert response.status_code == 401
@@ -184,7 +202,7 @@ class TestAdmin(TestAuthBase):
     def test_admin_permissions_unavailable(self):
         response = self.client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {
@@ -196,7 +214,7 @@ class TestAdmin(TestAuthBase):
     ):
         response = self.client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {"detail": "User cannot access this resource"}
@@ -205,7 +223,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
@@ -221,7 +239,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -233,7 +251,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -245,10 +263,28 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
         )
         assert response.status_code == 200
         assert response.json()["user_id"] == None
+
+
+class TestAdminESPv2(TestAdminESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        email = kwargs.get("email", None)
+        name = kwargs.get("name", None)
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAuthBase._encode_claims(
+            {
+                "https://api.fluidly.com/email": email,
+                "https://api.fluidly.com/name": name,
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
