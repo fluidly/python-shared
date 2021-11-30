@@ -175,7 +175,7 @@ class TestAuthorisedESPv1(TestAuthBase):
         assert response.json()["user_id"] == None
 
 
-class TestAdmin(TestAuthBase):
+class TestAdminESPv1(TestAuthBase):
     def test_admin_unauthenticated(self):
         response = self.client.get("/shared/admin")
         assert response.status_code == 401
@@ -184,7 +184,7 @@ class TestAdmin(TestAuthBase):
     def test_admin_permissions_unavailable(self):
         response = self.client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {
@@ -196,7 +196,7 @@ class TestAdmin(TestAuthBase):
     ):
         response = self.client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json() == {"detail": "User cannot access this resource"}
@@ -205,7 +205,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     email="bob@burgers.com", name="Bob", app_metadata={"userId": 2}
                 )
             },
@@ -221,7 +221,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -233,7 +233,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -245,7 +245,7 @@ class TestAdmin(TestAuthBase):
         response = self.client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
