@@ -229,7 +229,6 @@ class TestAdminESPv1:
         assert response.status_code == 200
 
 
-@pytest.mark.skip
 class TestAdminESPv2(TestAdminESPv1):
     @staticmethod
     def _get_dummy_user_info(**kwargs):
