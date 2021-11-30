@@ -57,7 +57,7 @@ def mocked_admin_given_permissions(monkeypatch):
     yield check_admin_permissions_mock
 
 
-class TestAuthorised:
+class TestAuthorisedESPv1:
     @staticmethod
     def _encode_claims(claims):
         return base64.b64encode(json.dumps(claims).encode("utf-8"))
@@ -67,7 +67,7 @@ class TestAuthorised:
         app_metadata = kwargs.get("app_metadata", {})
         internal_metadata = kwargs.get("internal_metadata", {})
 
-        return TestAuthorised._encode_claims(
+        return TestAuthorisedESPv1._encode_claims(
             {
                 "claims": json.dumps(
                     {
@@ -92,7 +92,7 @@ class TestAuthorised:
     def test_permissions_unavailable(self, client):
         response = client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -106,7 +106,7 @@ class TestAuthorised:
     ):
         response = client.get(
             "/shared/authorised/some:connection_id",
-            headers={"X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -121,7 +121,7 @@ class TestAuthorised:
         response = client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -135,7 +135,7 @@ class TestAuthorised:
         response = client.get(
             "/shared/authorised/some:connection_id",
             headers={
-                "X-Endpoint-API-UserInfo": TestAuthorised._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
@@ -144,7 +144,21 @@ class TestAuthorised:
         assert response.data == b"some:connection_id"
 
 
-class TestAdmin:
+class TestAuthorisedESPv2(TestAuthorisedESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAuthorisedESPv2._encode_claims(
+            {
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
+
+
+class TestAdminESPv1:
     @staticmethod
     def _encode_claims(claims):
         return base64.b64encode(json.dumps(claims).encode("utf-8"))
@@ -154,7 +168,7 @@ class TestAdmin:
         app_metadata = kwargs.get("app_metadata", {})
         internal_metadata = kwargs.get("internal_metadata", {})
 
-        return TestAdmin._encode_claims(
+        return TestAdminESPv1._encode_claims(
             {
                 "claims": json.dumps(
                     {
@@ -179,7 +193,7 @@ class TestAdmin:
     def test_admin_permissions_unavailable(self, client):
         response = client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -193,7 +207,7 @@ class TestAdmin:
     ):
         response = client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": self._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -208,7 +222,7 @@ class TestAdmin:
         response = client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -221,9 +235,23 @@ class TestAdmin:
         response = client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": self._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
         )
         assert response.status_code == 200
+
+
+class TestAdminESPv2(TestAdminESPv1):
+    @staticmethod
+    def _get_dummy_user_info(**kwargs):
+        app_metadata = kwargs.get("app_metadata", {})
+        internal_metadata = kwargs.get("internal_metadata", {})
+
+        return TestAdminESPv2._encode_claims(
+            {
+                "https://api.fluidly.com/app_metadata": {**app_metadata},
+                "https://api.fluidly.com/internal_metadata": {**internal_metadata},
+            }
+        )
