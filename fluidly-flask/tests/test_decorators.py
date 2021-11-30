@@ -144,7 +144,7 @@ class TestAuthorised:
         assert response.data == b"some:connection_id"
 
 
-class TestAdmin:
+class TestAdminESPv1:
     @staticmethod
     def _encode_claims(claims):
         return base64.b64encode(json.dumps(claims).encode("utf-8"))
@@ -154,7 +154,7 @@ class TestAdmin:
         app_metadata = kwargs.get("app_metadata", {})
         internal_metadata = kwargs.get("internal_metadata", {})
 
-        return TestAdmin._encode_claims(
+        return TestAdminESPv1._encode_claims(
             {
                 "claims": json.dumps(
                     {
@@ -179,7 +179,7 @@ class TestAdmin:
     def test_admin_permissions_unavailable(self, client):
         response = client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": TestAdminESPv1._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -193,7 +193,7 @@ class TestAdmin:
     ):
         response = client.get(
             "/shared/admin",
-            headers={"X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info()},
+            headers={"X-Endpoint-API-UserInfo": TestAdminESPv1._get_dummy_user_info()},
         )
         assert response.status_code == 403
         assert response.json == {
@@ -208,7 +208,7 @@ class TestAdmin:
         response = client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": TestAdminESPv1._get_dummy_user_info(
                     app_metadata={"userId": 2}
                 )
             },
@@ -221,7 +221,7 @@ class TestAdmin:
         response = client.get(
             "/shared/admin",
             headers={
-                "X-Endpoint-API-UserInfo": TestAdmin._get_dummy_user_info(
+                "X-Endpoint-API-UserInfo": TestAdminESPv1._get_dummy_user_info(
                     internal_metadata={"isServiceAccount": True}
                 )
             },
