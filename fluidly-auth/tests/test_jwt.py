@@ -7,24 +7,24 @@ from fluidly.auth import jwt
 from fluidly.auth.jwt import generate_jwt
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=False)
 def mocked_google_application_credentials(monkeypatch):
     mock_credentials = mock.MagicMock()
     mock_credentials.from_service_account_file.return_value.service_account_email = (
         "test@email.com"
     )
     monkeypatch.setattr(jwt, "Credentials", mock_credentials)
-    yield mock_credentials
+    return mock_credentials
 
 
 @pytest.fixture()
 def mocked_google_credentials(monkeypatch):
-    mock_credentials = mock.MagicMock()
-    mock_credentials.from_service_account_info.return_value.service_account_email = (
+    mock_google_credentials = mock.MagicMock()
+    mock_google_credentials.from_service_account_info.return_value.service_account_email = (
         "test-json@email.com"
     )
-    monkeypatch.setattr(jwt, "Credentials", mock_credentials)
-    yield mock_credentials
+    monkeypatch.setattr(jwt, "Credentials", mock_google_credentials)
+    return mock_google_credentials
 
 
 @pytest.fixture()
@@ -151,6 +151,14 @@ class TestGenerateJWT:
             )
             == b"JWT_TOKEN"
         )
+
+    def test_returning_jwt_with_google_credentials(
+        self, mocked_crypt, mocked_jwt, mocked_google_credentials
+    ):
+        jwt = generate_jwt(
+            {}, google_credentials='{"private_key":"very private"}'
+        )
+        assert jwt == b"JWT_TOKEN"
 
     def test_returning_jwt_from_auth0_env(
         self, mocked_auth0_jwt_token, mocked_crypt, mocked_jwt

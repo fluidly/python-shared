@@ -22,14 +22,23 @@ def generate_jwt(
     if not google_credentials:
         google_credentials = os.getenv(
             "GOOGLE_CREDENTIALS")
+
     if not google_application_credentials and not google_credentials:
         raise ValueError("Please provide GOOGLE_APPLICATION_CREDENTIALS")
 
     now = int(time.time())
 
-    sa_email = Credentials.from_service_account_file(
-        google_application_credentials
-    ).service_account_email
+    if google_application_credentials:
+        sa_email = Credentials.from_service_account_file(
+            google_application_credentials
+        ).service_account_email
+        signer = crypt.RSASigner.from_service_account_file(
+            google_application_credentials)
+    elif google_credentials:
+        sa_email = Credentials.from_service_account_info(
+            google_credentials).service_account_email
+        signer = crypt.RSASigner.from_service_account_info(
+            google_application_credentials)
 
     payload = {
         "iat": now,
@@ -47,8 +56,6 @@ def generate_jwt(
 
     claims.update(payload)
 
-    signer = crypt.RSASigner.from_service_account_file(
-        google_application_credentials)
     jwt_string = jwt.encode(signer, claims)
 
     return jwt_string
