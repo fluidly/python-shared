@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
@@ -8,8 +8,24 @@ from google.oauth2.service_account import Credentials
 audience: str = "https://api.fluidly.com"
 
 
+def get_service_account_email(path: Union[str, None], info: Union[str, None]) -> Any:
+    if path is not None:
+        return Credentials.from_service_account_file(path).service_account_email
+    elif info is not None:
+        return Credentials.from_service_account_info(info).service_account_email
+
+
+def get_signer(path: Union[str, None], info: Union[str, None]) -> Any:
+    if path is not None:
+        return crypt.RSASigner.from_service_account_file(path)
+    elif info is not None:
+        return crypt.RSASigner.from_service_account_info(info)
+
+
 def generate_jwt(
-    claims: Any, google_application_credentials: Optional[Any] = None, google_credentials: Optional[Any] = None,
+    claims: Any,
+    google_application_credentials: Optional[Any] = None,
+    google_application_credentials_info: Optional[Any] = None,
 ) -> Any:
     """Generates a signed JSON Web Token using a Google API Service Account."""
 
@@ -19,26 +35,21 @@ def generate_jwt(
     if not google_application_credentials:
         google_application_credentials = os.getenv(
             "GOOGLE_APPLICATION_CREDENTIALS")
-    if not google_credentials:
-        google_credentials = os.getenv(
-            "GOOGLE_CREDENTIALS")
+    if not google_application_credentials_info:
+        google_application_credentials_info = os.getenv("GOOGLE_CREDENTIALS")
 
-    if not google_application_credentials and not google_credentials:
+    if not google_application_credentials and not google_application_credentials_info:
         raise ValueError("Please provide GOOGLE_APPLICATION_CREDENTIALS")
 
     now = int(time.time())
 
-    if google_application_credentials:
-        sa_email = Credentials.from_service_account_file(
-            google_application_credentials
-        ).service_account_email
-        signer = crypt.RSASigner.from_service_account_file(
-            google_application_credentials)
-    elif google_credentials:
-        sa_email = Credentials.from_service_account_info(
-            google_credentials).service_account_email
-        signer = crypt.RSASigner.from_service_account_info(
-            google_application_credentials)
+    sa_email = get_service_account_email(
+        google_application_credentials, google_application_credentials_info
+    )
+
+    signer = get_signer(
+        google_application_credentials, google_application_credentials_info
+    )
 
     payload = {
         "iat": now,

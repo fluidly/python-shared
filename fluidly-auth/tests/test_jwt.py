@@ -18,7 +18,7 @@ def mocked_google_application_credentials(monkeypatch):
 
 
 @pytest.fixture()
-def mocked_google_credentials(monkeypatch):
+def mocked_google_credentials_info(monkeypatch):
     mock_google_credentials = mock.MagicMock()
     mock_google_credentials.from_service_account_info.return_value.service_account_email = (
         "test-json@email.com"
@@ -126,7 +126,9 @@ class TestGenerateJWT:
             pytest.fail("Unexpected ValueError")
 
     @freeze_time("2019-01-14 03:21:34")
-    def test_setting_claims(self, mocked_google_application_credentials, mocked_crypt, mocked_jwt):
+    def test_setting_claims(
+        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
+    ):
         claims = {}
 
         generate_jwt(
@@ -153,10 +155,10 @@ class TestGenerateJWT:
         )
 
     def test_returning_jwt_with_google_credentials(
-        self, mocked_crypt, mocked_jwt, mocked_google_credentials
+        self, mocked_crypt, mocked_jwt, mocked_google_credentials_info
     ):
         jwt = generate_jwt(
-            {}, google_credentials='{"private_key":"very private"}'
+            {}, google_application_credentials_info='{"private_key":"very private"}'
         )
         assert jwt == b"JWT_TOKEN"
 
