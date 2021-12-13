@@ -9,7 +9,7 @@ audience: str = "https://api.fluidly.com"
 
 
 def generate_jwt(
-    claims: Any, google_application_credentials: Optional[Any] = None
+    claims: Any, google_application_credentials: Optional[Any] = None, google_credentials: Optional[Any] = None,
 ) -> Any:
     """Generates a signed JSON Web Token using a Google API Service Account."""
 
@@ -17,9 +17,12 @@ def generate_jwt(
         return os.getenv("AUTH0_JWT_TOKEN")
 
     if not google_application_credentials:
-        google_application_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-
-    if not google_application_credentials:
+        google_application_credentials = os.getenv(
+            "GOOGLE_APPLICATION_CREDENTIALS")
+    if not google_credentials:
+        google_credentials = os.getenv(
+            "GOOGLE_CREDENTIALS")
+    if not google_application_credentials and not google_credentials:
         raise ValueError("Please provide GOOGLE_APPLICATION_CREDENTIALS")
 
     now = int(time.time())
@@ -44,7 +47,8 @@ def generate_jwt(
 
     claims.update(payload)
 
-    signer = crypt.RSASigner.from_service_account_file(google_application_credentials)
+    signer = crypt.RSASigner.from_service_account_file(
+        google_application_credentials)
     jwt_string = jwt.encode(signer, claims)
 
     return jwt_string
