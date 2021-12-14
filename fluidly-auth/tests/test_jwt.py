@@ -87,7 +87,8 @@ def mocked_auth0_jwt_token(monkeypatch):
 class TestGenerateJWT:
     def test_required_credentials(self):
         with pytest.raises(
-            ValueError, match="Please provide GOOGLE_APPLICATION_CREDENTIALS"
+            ValueError,
+            match="Please provide GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_CREDENTIALS",
         ):
             generate_jwt({})
 
