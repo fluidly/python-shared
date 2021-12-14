@@ -33,8 +33,7 @@ def generate_jwt(
         return os.getenv("AUTH0_JWT_TOKEN")
 
     if not google_application_credentials:
-        google_application_credentials = os.getenv(
-            "GOOGLE_APPLICATION_CREDENTIALS")
+        google_application_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     if not google_application_credentials_info:
         google_application_credentials_info = os.getenv("GOOGLE_CREDENTIALS")
 
@@ -43,13 +42,15 @@ def generate_jwt(
 
     now = int(time.time())
 
-    sa_email = get_service_account_email(
-        google_application_credentials, google_application_credentials_info
-    )
-
-    signer = get_signer(
-        google_application_credentials, google_application_credentials_info
-    )
+    try:
+        sa_email = get_service_account_email(
+            google_application_credentials, google_application_credentials_info
+        )
+        signer = get_signer(
+            google_application_credentials, google_application_credentials_info
+        )
+    except:
+        raise ValueError("Credentials must be path or json")
 
     payload = {
         "iat": now,

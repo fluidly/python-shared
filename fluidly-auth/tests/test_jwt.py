@@ -166,3 +166,11 @@ class TestGenerateJWT:
         self, mocked_auth0_jwt_token, mocked_crypt, mocked_jwt
     ):
         assert generate_jwt({}) == b"AUTH0_JWT_TOKEN"
+
+    def test_raises_error_if_not_path(self):
+        with pytest.raises(ValueError, match="Credentials must be path or json"):
+            generate_jwt({}, google_application_credentials="not a file path")
+
+    def test_raises_error_if_not_json_string(self):
+        with pytest.raises(ValueError, match="Credentials must be path or json"):
+            generate_jwt({}, google_application_credentials_info="not an object")
