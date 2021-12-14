@@ -7,14 +7,24 @@ from fluidly.auth import jwt
 from fluidly.auth.jwt import generate_jwt
 
 
-@pytest.fixture()
-def mocked_google_credentials(monkeypatch):
+@pytest.fixture(autouse=False)
+def mocked_google_application_credentials(monkeypatch):
     mock_credentials = mock.MagicMock()
     mock_credentials.from_service_account_file.return_value.service_account_email = (
         "test@email.com"
     )
     monkeypatch.setattr(jwt, "Credentials", mock_credentials)
-    yield mock_credentials
+    return mock_credentials
+
+
+@pytest.fixture()
+def mocked_google_credentials_info(monkeypatch):
+    mock_google_credentials = mock.MagicMock()
+    mock_google_credentials.from_service_account_info.return_value.service_account_email = (
+        "test-json@email.com"
+    )
+    monkeypatch.setattr(jwt, "Credentials", mock_google_credentials)
+    return mock_google_credentials
 
 
 @pytest.fixture()
@@ -47,6 +57,20 @@ def mocked_env_credentials_path(monkeypatch):
 
 
 @pytest.fixture()
+def mocked_env_credentials(monkeypatch):
+    mock_env_credentials = mock.MagicMock()
+
+    def load_env_var(env_name):
+        if env_name == "GOOGLE_CREDENTIALS":
+            return '{ "private_key":"very private"}'
+        return None
+
+    mock_env_credentials.side_effect = load_env_var
+    monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
+    yield mock_env_credentials
+
+
+@pytest.fixture()
 def mocked_auth0_jwt_token(monkeypatch):
     mock_env_credentials = mock.MagicMock()
 
@@ -63,13 +87,14 @@ def mocked_auth0_jwt_token(monkeypatch):
 class TestGenerateJWT:
     def test_required_credentials(self):
         with pytest.raises(
-            ValueError, match="Please provide GOOGLE_APPLICATION_CREDENTIALS"
+            ValueError,
+            match="Please provide GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_CREDENTIALS",
         ):
             generate_jwt({})
 
-    def test_passing_env_credentials(
+    def test_passing_env_path_credentials(
         self,
-        mocked_google_credentials,
+        mocked_google_application_credentials,
         mocked_crypt,
         mocked_jwt,
         mocked_env_credentials_path,
@@ -79,8 +104,20 @@ class TestGenerateJWT:
         except ValueError:
             pytest.fail("Unexpected ValueError")
 
+    def test_passing_env_credentials(
+        self,
+        mocked_google_application_credentials,
+        mocked_crypt,
+        mocked_jwt,
+        mocked_env_credentials,
+    ):
+        try:
+            assert generate_jwt({}) == b"JWT_TOKEN"
+        except ValueError:
+            pytest.fail("Unexpected ValueError")
+
     def test_using_kwargs_credentials(
-        self, mocked_google_credentials, mocked_crypt, mocked_jwt
+        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
     ):
         try:
             generate_jwt(
@@ -90,7 +127,9 @@ class TestGenerateJWT:
             pytest.fail("Unexpected ValueError")
 
     @freeze_time("2019-01-14 03:21:34")
-    def test_setting_claims(self, mocked_google_credentials, mocked_crypt, mocked_jwt):
+    def test_setting_claims(
+        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
+    ):
         claims = {}
 
         generate_jwt(
@@ -106,8 +145,8 @@ class TestGenerateJWT:
             "sub": "test@email.com",
         }
 
-    def test_returning_jwt_with_google_credentials(
-        self, mocked_google_credentials, mocked_crypt, mocked_jwt
+    def test_returning_jwt_with_google_credentials_path(
+        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
     ):
         assert (
             generate_jwt(
@@ -116,7 +155,23 @@ class TestGenerateJWT:
             == b"JWT_TOKEN"
         )
 
+    def test_returning_jwt_with_google_credentials(
+        self, mocked_crypt, mocked_jwt, mocked_google_credentials_info
+    ):
+        jwt = generate_jwt(
+            {}, google_application_credentials_info='{"private_key":"very private"}'
+        )
+        assert jwt == b"JWT_TOKEN"
+
     def test_returning_jwt_from_auth0_env(
         self, mocked_auth0_jwt_token, mocked_crypt, mocked_jwt
     ):
         assert generate_jwt({}) == b"AUTH0_JWT_TOKEN"
+
+    def test_raises_error_if_not_path(self):
+        with pytest.raises(Exception, match="Credentials must be a path or json"):
+            generate_jwt({}, google_application_credentials="not a file path")
+
+    def test_raises_error_if_not_json_string(self):
+        with pytest.raises(Exception, match="'str' object has no attribute 'keys'"):
+            generate_jwt({}, google_application_credentials_info="not an object")
