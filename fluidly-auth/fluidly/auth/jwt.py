@@ -20,8 +20,8 @@ def get_service_account_and_signer(
             return Credentials.from_service_account_info(
                 info
             ).service_account_email, crypt.RSASigner.from_service_account_info(info)
-    except:
-        raise ValueError("Credentials must be path or json")
+    except FileNotFoundError or AttributeError:
+        raise Exception("Credentials must be a path or json")
 
 
 def generate_jwt(
