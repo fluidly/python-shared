@@ -1,16 +1,18 @@
+import json
 import os
 import time
-from typing import Any, Optional, Union
+from typing import Any, Mapping, Optional, Tuple
 
 from google.auth import crypt, jwt
+from google.auth.crypt.base import Signer
 from google.oauth2.service_account import Credentials
 
-audience: str = "https://api.fluidly.com"
+audience = "https://api.fluidly.com"
 
 
 def get_service_account_and_signer(
-    path: Union[str, None], info: Union[str, None]
-) -> Any:
+    path: Optional[str], info: Optional[Mapping[str, str]]
+) -> Tuple[str, Signer]:
     try:
         if path is not None:
             return Credentials.from_service_account_file(
@@ -20,24 +22,33 @@ def get_service_account_and_signer(
             return Credentials.from_service_account_info(
                 info
             ).service_account_email, crypt.RSASigner.from_service_account_info(info)
+        else:
+            raise ValueError("Credentials path or info must be set")
     except FileNotFoundError or AttributeError:
         raise Exception("Credentials must be a path or json")
 
 
 def generate_jwt(
     claims: Any,
-    google_application_credentials: Optional[Any] = None,
-    google_application_credentials_info: Optional[Any] = None,
-) -> Any:
+    google_application_credentials: Optional[str] = None,
+    google_application_credentials_info: Optional[str] = None,
+) -> bytes:
     """Generates a signed JSON Web Token using a Google API Service Account."""
 
-    if os.getenv("AUTH0_JWT_TOKEN"):
-        return os.getenv("AUTH0_JWT_TOKEN")
+    auth0_jwt_token = os.getenv("AUTH0_JWT_TOKEN")
+    if auth0_jwt_token:
+        return auth0_jwt_token.encode()
 
-    if not google_application_credentials:
+    if google_application_credentials is None:
         google_application_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-    if not google_application_credentials_info:
+
+    parsed_google_application_credentials_info = None
+    if google_application_credentials_info is None:
         google_application_credentials_info = os.getenv("GOOGLE_CREDENTIALS")
+    if google_application_credentials_info:
+        parsed_google_application_credentials_info = json.loads(
+            google_application_credentials_info
+        )
 
     if not google_application_credentials and not google_application_credentials_info:
         raise ValueError(
@@ -47,7 +58,7 @@ def generate_jwt(
     now = int(time.time())
 
     sa_email, signer = get_service_account_and_signer(
-        google_application_credentials, google_application_credentials_info
+        google_application_credentials, parsed_google_application_credentials_info
     )
 
     payload = {
@@ -66,6 +77,6 @@ def generate_jwt(
 
     claims.update(payload)
 
-    jwt_string = jwt.encode(signer, claims)
+    jwt_string: bytes = jwt.encode(signer, claims)
 
     return jwt_string

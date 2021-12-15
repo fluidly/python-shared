@@ -1,30 +1,34 @@
+import json
 from unittest import mock
 
 import pytest
 from freezegun import freeze_time
+from google.oauth2.service_account import Credentials
 
 from fluidly.auth import jwt
 from fluidly.auth.jwt import generate_jwt
 
 
-@pytest.fixture(autouse=False)
-def mocked_google_application_credentials(monkeypatch):
-    mock_credentials = mock.MagicMock()
-    mock_credentials.from_service_account_file.return_value.service_account_email = (
-        "test@email.com"
-    )
-    monkeypatch.setattr(jwt, "Credentials", mock_credentials)
-    return mock_credentials
+class MockCredentials:
+    service_account_email = "test@email.com"
 
 
 @pytest.fixture()
-def mocked_google_credentials_info(monkeypatch):
-    mock_google_credentials = mock.MagicMock()
-    mock_google_credentials.from_service_account_info.return_value.service_account_email = (
-        "test-json@email.com"
+def mock_google_credentials(monkeypatch):
+    def mock_credentials_from_file(path):
+        assert type(path) == str
+        return MockCredentials()
+
+    def mock_credentials_from_info(info):
+        assert type(info) == dict
+        return MockCredentials()
+
+    monkeypatch.setattr(
+        Credentials, "from_service_account_file", mock_credentials_from_file
     )
-    monkeypatch.setattr(jwt, "Credentials", mock_google_credentials)
-    return mock_google_credentials
+    monkeypatch.setattr(
+        Credentials, "from_service_account_info", mock_credentials_from_info
+    )
 
 
 @pytest.fixture()
@@ -44,44 +48,17 @@ def mocked_jwt(monkeypatch):
 
 @pytest.fixture()
 def mocked_env_credentials_path(monkeypatch):
-    mock_env_credentials = mock.MagicMock()
-
-    def load_env_var(env_name):
-        if env_name == "GOOGLE_APPLICATION_CREDENTIALS":
-            return "/some/path/credentials.json"
-        return None
-
-    mock_env_credentials.side_effect = load_env_var
-    monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
-    yield mock_env_credentials
+    monkeypatch.setenv("GOOGLE_APPLICATION_CREDENTIALS", "/some/path/credentials.json")
 
 
 @pytest.fixture()
 def mocked_env_credentials(monkeypatch):
-    mock_env_credentials = mock.MagicMock()
-
-    def load_env_var(env_name):
-        if env_name == "GOOGLE_CREDENTIALS":
-            return '{ "private_key":"very private"}'
-        return None
-
-    mock_env_credentials.side_effect = load_env_var
-    monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
-    yield mock_env_credentials
+    monkeypatch.setenv("GOOGLE_CREDENTIALS", '{ "private_key":"very private"}')
 
 
 @pytest.fixture()
 def mocked_auth0_jwt_token(monkeypatch):
-    mock_env_credentials = mock.MagicMock()
-
-    def load_env_var(env_name):
-        if env_name == "AUTH0_JWT_TOKEN":
-            return b"AUTH0_JWT_TOKEN"
-        return None
-
-    mock_env_credentials.side_effect = load_env_var
-    monkeypatch.setattr(jwt.os, "getenv", mock_env_credentials)
-    yield mock_env_credentials
+    monkeypatch.setenv("AUTH0_JWT_TOKEN", "AUTH0_JWT_TOKEN")
 
 
 class TestGenerateJWT:
@@ -94,10 +71,10 @@ class TestGenerateJWT:
 
     def test_passing_env_path_credentials(
         self,
-        mocked_google_application_credentials,
         mocked_crypt,
         mocked_jwt,
         mocked_env_credentials_path,
+        mock_google_credentials,
     ):
         try:
             assert generate_jwt({}) == b"JWT_TOKEN"
@@ -105,11 +82,7 @@ class TestGenerateJWT:
             pytest.fail("Unexpected ValueError")
 
     def test_passing_env_credentials(
-        self,
-        mocked_google_application_credentials,
-        mocked_crypt,
-        mocked_jwt,
-        mocked_env_credentials,
+        self, mocked_crypt, mocked_jwt, mocked_env_credentials, mock_google_credentials
     ):
         try:
             assert generate_jwt({}) == b"JWT_TOKEN"
@@ -117,7 +90,7 @@ class TestGenerateJWT:
             pytest.fail("Unexpected ValueError")
 
     def test_using_kwargs_credentials(
-        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
+        self, mocked_crypt, mocked_jwt, mock_google_credentials
     ):
         try:
             generate_jwt(
@@ -127,9 +100,7 @@ class TestGenerateJWT:
             pytest.fail("Unexpected ValueError")
 
     @freeze_time("2019-01-14 03:21:34")
-    def test_setting_claims(
-        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
-    ):
+    def test_setting_claims(self, mocked_crypt, mocked_jwt, mock_google_credentials):
         claims = {}
 
         generate_jwt(
@@ -146,7 +117,7 @@ class TestGenerateJWT:
         }
 
     def test_returning_jwt_with_google_credentials_path(
-        self, mocked_google_application_credentials, mocked_crypt, mocked_jwt
+        self, mocked_crypt, mocked_jwt, mock_google_credentials
     ):
         assert (
             generate_jwt(
@@ -156,7 +127,7 @@ class TestGenerateJWT:
         )
 
     def test_returning_jwt_with_google_credentials(
-        self, mocked_crypt, mocked_jwt, mocked_google_credentials_info
+        self, mocked_crypt, mocked_jwt, mock_google_credentials
     ):
         jwt = generate_jwt(
             {}, google_application_credentials_info='{"private_key":"very private"}'
@@ -173,5 +144,5 @@ class TestGenerateJWT:
             generate_jwt({}, google_application_credentials="not a file path")
 
     def test_raises_error_if_not_json_string(self):
-        with pytest.raises(Exception, match="'str' object has no attribute 'keys'"):
+        with pytest.raises(json.decoder.JSONDecodeError):
             generate_jwt({}, google_application_credentials_info="not an object")
