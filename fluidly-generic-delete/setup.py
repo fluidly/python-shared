@@ -11,7 +11,7 @@ URL = "https://github.com/fluidly/generic-delete"
 EMAIL = "tech@fluidly.com"
 AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 
 def local_dependencies(*packages):
