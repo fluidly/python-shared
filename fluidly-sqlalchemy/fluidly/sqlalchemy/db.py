@@ -2,15 +2,15 @@ from contextlib import contextmanager
 from typing import Any, Generator
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import SessionTransaction
+from sqlalchemy.orm.session import Session
 
-sessionmaker = sessionmaker()
+SessionMaker = sessionmaker()
 
 
 @contextmanager
-def db_session() -> Generator[SessionTransaction, Any, Any]:
+def db_session() -> Generator[Session, Any, Any]:
     try:
-        session: SessionTransaction = sessionmaker()
+        session = SessionMaker()
         yield session
     except Exception:
         session.rollback()
