@@ -10,7 +10,7 @@ from fluidly.sqlalchemy.db import db_session
 @pytest.fixture()
 def sessionmaker_mock(monkeypatch):
     mock_sessionmaker = mock.MagicMock()
-    monkeypatch.setattr(db, "sessionmaker", mock_sessionmaker)
+    monkeypatch.setattr(db, "SessionMaker", mock_sessionmaker)
     yield mock_sessionmaker
 
 
