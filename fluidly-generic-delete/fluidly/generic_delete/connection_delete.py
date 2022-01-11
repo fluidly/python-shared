@@ -1,4 +1,5 @@
-from typing import Optional, List, Any
+from typing import Any, List, Optional
+
 from sqlalchemy import delete
 from sqlalchemy.orm.session import Session
 
@@ -7,7 +8,7 @@ from fluidly.structlog.pubsub_helper import pubsub_log_entrypoint_class
 
 
 class DeleteConnectionConsumer:
-    def __init__(self, base: Any, ignored_tables:Optional[List[str]]=None):
+    def __init__(self, base: Any, ignored_tables: Optional[List[str]] = None):
         self.base = base
         if ignored_tables is None:
             self.ignored_tables = []
@@ -15,7 +16,9 @@ class DeleteConnectionConsumer:
             self.ignored_tables = ignored_tables
 
     @pubsub_log_entrypoint_class
-    def delete_by_connection_id(self, session: Session, message: Message, refresh_generated:bool=False) -> None:
+    def delete_by_connection_id(
+        self, session: Session, message: Message, refresh_generated: bool = False
+    ) -> None:
         connection_id = message.connection_id
         for table in self.base.metadata.tables.values():
             if (
