@@ -1,4 +1,4 @@
-from fastapi_camelcase import CamelModel
+from fastapi_camelcase import CamelModel # type: ignore
 
 from fluidly.fastapi.constants.status import StatusEnum
 
