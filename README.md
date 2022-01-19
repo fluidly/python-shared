@@ -7,6 +7,9 @@ Due to the special configuration of sub-packages and how some depend on each oth
 
 Luckily, dependencies for python-shared are simple so we manage this ourselves with Nox.
 
+## Prerequisites
+You will need to have `pyenv` and `pyenv-virtualenv` installed.
+
 ## Setup
 
 ```

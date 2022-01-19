@@ -21,9 +21,9 @@ def local_dependencies(*packages):
     return list(packages)
 
 
-REQUIRED = [
-    "fastapi==0.68.2",
-] + local_dependencies("fluidly-structlog", "fluidly-auth")
+REQUIRED = ["fastapi==0.68.2", "fastapi_camelcase"] + local_dependencies(
+    "fluidly-structlog", "fluidly-auth"
+)
 
 
 EXTRAS = {}
