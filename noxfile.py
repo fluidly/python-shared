@@ -9,6 +9,8 @@ FORMAT_DEPENDENCIES = ["autoflake", "black", "isort"]
 PACKAGES = [f for f in os.listdir(".") if os.path.isdir(f) and f.startswith("fluidly-")]
 
 nox.options.sessions = ["format", "lint", "type_check", "test"]
+nox.options.envdir = ".cache"
+nox.options.reuse_existing_virtualenvs = True
 
 
 def install_local_packages_as_editable(session, packages):

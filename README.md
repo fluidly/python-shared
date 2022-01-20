@@ -57,3 +57,6 @@ eval "$(pyenv virtualenv-init -)"
 ```
 
 Open a new terminal, you should now be able to run `nox -s setup`.
+
+### Nox help
+https://medium.com/analytics-vidhya/nox-the-shining-python-test-automation-tool-3e189e343b57
