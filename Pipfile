@@ -4,10 +4,36 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pytest = "*"
+responses = "*"
+fluidly-flask = {editable = true, path = "./fluidly-flask"}
+fluidly-auth = {editable = true, path = "./fluidly-auth"}
+fluidly-pubsub = {editable = true, path = "./fluidly-pubsub"}
+fluidly-structlog = {editable = true, path = "./fluidly-structlog"}
+fluidly-fastapi = {editable = true, path = "./fluidly-fastapi"}
+fluidly-generic-delete = {editable = true, path = "./fluidly-generic-delete"}
+fluidly-generic-query = {editable = true, path = "./fluidly-generic-query"}
+fluidly-sqlalchemy = {editable = true, path = "./fluidly-sqlalchemy"}
+fluidly-pipenv = {editable = true, path = "./fluidly-pipenv"}
+freezegun = "*"
+autoflake = "*"
+black = "*"
+isort = "*"
+flake8 = "*"
+mypy = "*"
+types-setuptools = "*"
+types-requests = "*"
 
 [dev-packages]
 twine = "*"
 bumpversion = "*"
+pre-commit = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"
+
+[scripts]
+setup = "bash -c \"pre-commit install\""
+format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort . && black .\""
+lint = "bash -c \"flake8 fluidly-*\""
+type_check = "bash -c \"ls -d fluidly-* | grep -Ev 'generic-delete|generic-query' | xargs -t -I {} pipenv run mypy {}/fluidly\""
