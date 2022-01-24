@@ -27,11 +27,13 @@ types-requests = "*"
 [dev-packages]
 twine = "*"
 bumpversion = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.9"
 
 [scripts]
+setup = "bash -c \"pre-commit install\""
 format = "bash -c \"autoflake --remove-all-unused-imports -i -r . && isort . && black .\""
 lint = "bash -c \"flake8 fluidly-*\""
 type_check = "bash -c \"ls -d fluidly-* | grep -Ev 'generic-delete|generic-query' | xargs -t -I {} pipenv run mypy {}/fluidly\""
