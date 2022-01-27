@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1 import SubscriberClient
@@ -20,6 +20,8 @@ def get_pubsub_subscriber() -> SubscriberClient:
     return _subscriber
 
 
-def setup_subscriptions(subscriptions: Subscriptions) -> SubscriptionFutures:
+def setup_subscriptions(
+    subscriptions: Subscriptions, **kwargs: Any
+) -> SubscriptionFutures:
     subscriber = get_pubsub_subscriber()
-    return setup_base_subscriber(subscriber, subscriptions)
+    return setup_base_subscriber(subscriber, subscriptions, **kwargs)

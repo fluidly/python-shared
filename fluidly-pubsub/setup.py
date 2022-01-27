@@ -11,7 +11,7 @@ URL = "https://github.com/fluidly/python-shared"
 EMAIL = "tech@fluidly.com"
 AUTHOR = "Fluidly"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 REQUIRED = ["google-cloud-pubsub"]
 
