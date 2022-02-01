@@ -154,8 +154,8 @@
         "fluidly-pubsub": {
             "editable": true,
             "hashes": [
-                "sha256:7ebe20ad9569322218df82f8e67ff83fc7e3459c93906f2a13a54c3bbe79bebd",
-                "sha256:921da604b43c311ffd42aef4d87c5a5187f545f12dd5863834763e63d13d3474"
+                "sha256:15549942fbf5287180a3a9045f63ebd25b92057c7a222c36053519338c594d76",
+                "sha256:43f34220a4a02651b02bc8b50b7fc806a01b319cef85dca58a44dc0a070d33ca"
             ],
             "path": "./fluidly-pubsub",
             "version": "==0.2.1"
@@ -171,7 +171,6 @@
                 "sha256:eb67a6f3055d30663e2322a37baffd3669c7103ec4b739960b0170c831fc8b17"
             ],
             "path": "./fluidly-structlog",
-            "ref": "bf77fde37fd10dd28a05cc8e1edbd4388328c2ad",
             "version": "==0.1.8"
         },
         "freezegun": {
@@ -195,11 +194,11 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:6577bbf990ef342a24e12e0c8e9d364af6642acdf206c9045bdb8e039fb4fec9",
-                "sha256:ee6199b602594c0dcaa00dc3492e62569f24a788f0aca867b989cef444e4a202"
+                "sha256:218ca03d7744ca0c8b6697b6083334be7df49b7bf76a69d555962fd1a7657b5f",
+                "sha256:ad160fc1ea8f19e331a16a14a79f3d643d813a69534ba9611d2c80dc10439dad"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==2.5.0"
+            "version": "==2.6.0"
         },
         "google-cloud-pubsub": {
             "hashes": [
@@ -806,7 +805,7 @@
         },
         "sanitized-package": {
             "editable": true,
-            "path": "./fluidly-generic-delete"
+            "path": "./fluidly-auth"
         },
         "setuptools": {
             "hashes": [
@@ -900,11 +899,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:2e0e100dd489f83870d4f61949d3a7eae4821e7bfbf46c57e463c38f92d473d4",
-                "sha256:f38bd488528cdcbce5b01dc953972f3cead0d060cfd9ee35b363066c25bab13c"
+                "sha256:8ec9f5f84adc6f579f53943312c28a84e87dc70201b54f7c4fbc7d22ecfa8a3e",
+                "sha256:c2f4e4754d07ca0a88fd8a89bbc6c8a9f90fb441f9c9b572fd5c484f04817486"
             ],
             "index": "pypi",
-            "version": "==2.27.7"
+            "version": "==2.27.8"
         },
         "types-setuptools": {
             "hashes": [
@@ -926,7 +925,7 @@
                 "sha256:4ca091dea149f945ec56afb48dae714f21e8692ef22a395223bcd328961b6a0e",
                 "sha256:7f001e5ac290a0c0401508864c7ec868be4e701886d5b573a9528ed3973d9d3b"
             ],
-            "markers": "python_version < '3.10'",
+            "markers": "python_version >= '3.6'",
             "version": "==4.0.1"
         },
         "typing-inspect": {
@@ -942,7 +941,7 @@
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.8"
         },
         "uwsgi": {
@@ -1122,11 +1121,11 @@
         },
         "identify": {
             "hashes": [
-                "sha256:233679e3f61a02015d4293dbccf16aa0e4996f868bd114688b8c124f18826706",
-                "sha256:cf06b1639e0dca0c184b1504d8b73448c99a68e004a80524c7923b95f7b6837c"
+                "sha256:8408f01e0be25492017346d7dffe7e7711b762b23375c775d24d3bc38618fabc",
+                "sha256:e64210654dfbca6ced33230eb1b137591a0981425e1a60b4c6c36309f787bbd5"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==2.4.6"
+            "version": "==2.4.7"
         },
         "idna": {
             "hashes": [
@@ -1336,7 +1335,7 @@
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.8"
         },
         "virtualenv": {
