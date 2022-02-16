@@ -1,10 +1,31 @@
 import time
 from functools import wraps
+from typing import Any
 
+from sqlalchemy.orm.session import Session
+from typing_extensions import Protocol
+
+from fluidly.pubsub.message import Message
 from fluidly.structlog.base_logger import get_logger
 
 
-def pubsub_log_entrypoint(func):
+class MessageCallback(Protocol):
+    __qualname__: str
+
+    def __call__(self, message: Message, *args: Any, **kwargs: Any) -> None:
+        ...
+
+
+class SessionMessageCallback(Protocol):
+    __qualname__: str
+
+    def __call__(
+        self, session: Session, message: Message, *args: Any, **kwargs: Any
+    ) -> None:
+        ...
+
+
+def pubsub_log_entrypoint(func: MessageCallback):
     @wraps(func)
     def wrapper(message, *args, **kwargs):
         logger = get_logger()
@@ -42,7 +63,7 @@ def pubsub_log_entrypoint(func):
     return wrapper
 
 
-def pubsub_log_entrypoint_class(func):
+def pubsub_log_entrypoint_class(func: SessionMessageCallback):
     @wraps(func)
     def wrapper(self, session, message, *args, **kwargs):
         logger = get_logger()
